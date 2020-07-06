@@ -1,6 +1,6 @@
 # Carrier | Installer
 #### Prerequisites
-Install Docker.
+Install Docker.  
 Required ports for SSH and Local installation:
 22, 80, 3100, 6379, 8086.
 #### How to use
