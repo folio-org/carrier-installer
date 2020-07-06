@@ -1,9 +1,9 @@
 # Carrier | Installer
-#### Prerequisites
+### Prerequisites
 Install Docker.  
 Required ports for SSH and Local installation:
 22, 80, 3100, 6379, 8086.
-#### How to use
+### How to use
 !! Make sure that you have at least 16GB of RAM on VM where you want install Carrier !!
 
 1) Run the docker command:
