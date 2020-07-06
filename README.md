@@ -17,8 +17,8 @@ docker run -it -p 1337:1337 getcarrier/installer
 
 ## Current status
 ### Clouds
-AWS - Only Ubuntu Server 18.04 LTS.
-GCP - Ubuntu: 18.04, 19.10, 20.04. Centos: 7, 8.
+AWS - Only Ubuntu Server 18.04 LTS.  
+GCP - Ubuntu: 18.04, 19.10, 20.04. Centos: 7, 8.  
 AZURE - Under Development.
 ### SSH
 Working correctly with [Ubuntu: 18.04, 19.10, 20.04. Centos: 7, 8.]
