@@ -3,11 +3,11 @@
   connection: local
   become: yes
   vars_files:
-  - vars/default.yml
+  - /installer/vars/default.yml
   tasks:
     - name: Prepare folders
       file:
-        path: /opt/carrier
+        path: /opt/carrier/
         state: directory
         mode: '0755'
 
@@ -20,44 +20,9 @@
       loop: [ 'apt-transport-https', 'git', 'ca-certificates', 'curl', 'software-properties-common']
       when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
-    - name: Add Docker GPG apt Key
-      apt_key:
-        url: https://download.docker.com/linux/ubuntu/gpg
-        state: present
-      when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
-
-    - name: Add Docker Repository
-      apt_repository:
-        repo: deb https://download.docker.com/linux/ubuntu bionic stable
-        state: present
-      when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
-
-    - name: Update apt and install docker-ce
-      yum: update_cache=yes name=docker-ce state=latest
-      when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
-
     - name: Install required system packages
       yum: name={{ item }} state=latest update_cache=true
       loop: [ 'epel-release', 'yum-utils', 'lvm2', 'git', 'ca-certificates', 'curl' ]
-      when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
-
-    - name: Add Docker repo
-      get_url:
-        url: https://download.docker.com/linux/centos/docker-ce.repo
-        dest: /etc/yum.repos.d/docker-ce.repo
-      when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
-
-    - name: Install Docker
-      package:
-        name: docker-ce
-        state: latest
-      when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
-
-    - name: Start Docker service
-      service:
-        name: docker
-        state: started
-        enabled: yes
       when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
 
     - name: Install docker-compose
@@ -76,8 +41,11 @@
 
     - git:
         repo: https://github.com/carrier-io/carrier-io.git
-        dest: /opt/carrier/
+        dest: /opt/temp/
       ignore_errors: yes
+
+    - name: Remove unimportant files
+      shell: mv /opt/temp/dev /opt/carrier && rm -rf /opt/temp/
 
     - name: Replace App Host
       replace:
@@ -101,16 +69,17 @@
       when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
       register: output
 
-    - name: sleep
+    - name: Wait until the services fully load
       command: sleep 35
 
-    - name: Copy file with owner and permissions
+    - name: Copy files
       copy:
-        src: /installer/https_required.sh
-        dest: /tmp/https_required.sh
+        src: /installer/bootstrap.sh
+        dest: /opt/carrier/dev/bootstrap.sh
+        force: yes
 
-    - name: https required
-      shell: bash /tmp/https_required.sh
+    - name: bootstrap
+      shell: bash /opt/carrier/dev/bootstrap.sh
 
     - debug:
         var: output
