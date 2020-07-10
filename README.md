@@ -12,7 +12,8 @@ Required ports for SSH and Local installation:
 
 ``
 docker run -it -v /opt:/opt -v /var/run/docker.sock:/var/run/docker.sock -p 1337:1337 getcarrier/installer
-``  
+``
+  
 2) Open http://localhost:1337/ in your browser  
 3) Choose local  
 
