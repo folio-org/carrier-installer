@@ -75,14 +75,10 @@ def ssh():
         return render_template('ssh.html')
 
 
-@installer.route('/local', methods=['GET', 'POST'])
+@installer.route('/local')
 def self():
-    if request.method == 'POST':
-        data = request.form['public_ip']
-        test = os.system("bash local_install/install.sh " + data)
-        return test
-    else:
-        return render_template('local.html')
+    test = os.system("bash local_install/install.sh")
+    return test
 
 
 if __name__ == "__main__":

@@ -75,8 +75,11 @@
 
     - git:
         repo: https://github.com/carrier-io/carrier-io.git
-        dest: /opt/carrier/
+        dest: /opt/temp/
       ignore_errors: yes
+
+    - name: Remove unimportant files
+      shell: mv /opt/temp/dev /opt/carrier && rm -rf /opt/temp/
 
     - name: Replace App Host
       replace:
@@ -100,16 +103,17 @@
       when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
       register: output
 
-    - name: sleep
+    - name: Wait until the services fully load
       command: sleep 35
 
-    - name: Copy file with owner and permissions
+    - name: Copy files
       copy:
-        src: /installer/https_required.sh
-        dest: /tmp/https_required.sh
+        src: /installer/bootstrap.sh
+        dest: /opt/carrier/dev/bootstrap.sh
+        force: yes
 
-    - name: https required
-      shell: bash /tmp/https_required.sh
+    - name: bootstrap
+      shell: bash /opt/carrier/dev/bootstrap.sh
 
     - debug:
         var: output
