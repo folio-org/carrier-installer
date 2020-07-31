@@ -118,7 +118,6 @@ if [[ $2 == "rhel8" ]]; then
 fi
 
 terraform init /installer/aws_install
-terraform plan -var-file=/installer/aws_install/terraform.tfvars /installer/aws_install
 terraform apply -auto-approve -var-file=/installer/aws_install/terraform.tfvars /installer/aws_install
 sleep 75
 

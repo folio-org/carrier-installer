@@ -7,18 +7,62 @@
     <link type="text/css" href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
     <title>Carrier Azure installer</title>
   </head>
-
   <body>
     <div class="container midscreen w-50 float-left ml-5">
       <form method="post">
-        <div class="form-group">
-          <label for="file">file</label>
-          <input type="file" class="form-control" name="file" id="file" placeholder="Enter your file">
+        <div class="login">
+          <label><h3> MYCODE </h3></label>
         </div>
+        <div class="vmtype">
+          <label> Select Region: </label>
+          <select class="custom-select" name="region">
+            <option value="eastus" selected> (US) East US [default] </option>
+            <option value="eastus2"> (US) East US 2 </option>
+            <option value="southcentralus"> (US) South Central US </option>
+            <option value="westus2"> (US) West US 2 </option>
+            <option value="australiaeast"> (Asia Pacific) Australia East </option>
+            <option value="southeastasia"> (Asia Pacific) Southeast Asia </option>
+            <option value="northeurope"> (Europe) North Europe </option>
+            <option value="uksouth"> (Europe) UK South </option>
+            <option value="westeurope"> (Europe) West Europe </option>
+            <option value="centralus"> (US) Central US </option>
+            <option value="northcentralus"> (US) North Central US </option>
+            <option value="westus"> (US) West US </option>
+            <option value="southafricanorth"> (Africa) South Africa North </option>
+            <option value="centralindia"> (Asia Pacific) Central India </option>
+            <option value="eastasia"> (Asia Pacific) East Asia </option>
+            <option value="japaneast"> (Asia Pacific) Japan East </option>
+            <option value="koreacentral"> (Asia Pacific) Korea Central </option>
+            <option value="canadacentral"> (Canada) Canada Central </option>
+            <option value="francecentral"> (Europe) France Central </option>
+            <option value="germanywestcentral"> (Europe) Germany West Central </option>
+            <option value="norwayeast"> Europe) Norway East </option>
+            <option value="switzerlandnorth"> (Europe) Switzerland North </option>
+            <option value="uaenorth"> (Middle East) UAE North </option>
+            <option value="brazilsouth"> (South America) Brazil South </option>
+          </select>
+          </div>
+          <p></p>
+          <div class="vmtype">
+          <label> Select Virtual Machine type: </label>
+          <select class="custom-select" name="vmtype">
+            <option value="Standard_D4s_v3" selected> Low [4 CPU 16 RAM] (Recommended) </option>
+            <option value="Standard_D8s_v3"> Medium [8 CPU 32 RAM] </option>
+          </select>
+          </div>
+          <p></p>
+          <div class="ostype">
+          <label> Select Operating System: </label>
+          <select class="custom-select" name="ostype">
+            <option value="ubu1804" selected> Ubuntu Server 18.04 LTS </option>
+            <option value="ubu2004" > Ubuntu Server 20.04 LTS </option>
+            <option value="centos75"> CentOs 7.5 </option>
+          </select>
+          </div>
+          <p></p>
         <button type="submit" class="btn btn-primary">Install</button>
       </form>
     </div>
-
     <script src="{{ url_for('static', filename='js/jquery.slim.min.js') }}"></script>
     <script src="{{ url_for('static', filename='js/popper.min.js') }}"></script>
     <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
