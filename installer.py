@@ -29,10 +29,11 @@ def gcp():
     if request.method == 'POST':
         gcpfile = request.files['file']
         ostype = request.form['ostype']
+        region = request.form['region']
         vmtype = request.form['vmtype']
         gcpaccname = request.form['gcpaccname']
         gcpfile.save(os.path.join('/installer/gcp_install', "credentials.json"))
-        test = os.system("bash /installer/gcp_install/install.sh " + vmtype + " " + ostype + " " + gcpaccname)
+        test = os.system("bash /installer/gcp_install/install.sh " + vmtype + " " + ostype + " " + gcpaccname + " " + region)
         return "status here"
     else:
         return render_template('gcp.html')
