@@ -1,22 +1,9 @@
-from flask import Flask, render_template, request
-
+from flask import Flask, render_template, request, send_file
 
 import os
 from subprocess import Popen, PIPE, CalledProcessError
-# ALLOWED_EXTENSIONS = set([])
 
 installer = Flask(__name__)
-
-def _popen_yield(cmd):
-    popen = Popen(cmd, stdout=PIPE, stderr=PIPE, universal_newlines=True)
-    for stdout_line in iter(popen.stdout.readline, ""):
-        yield f"{stdout_line}\n"
-    popen.stdout.close()
-    return_code = popen.wait()
-    if return_code:
-        yield f'ERROR: \n{popen.stderr.read()}'
-        raise CalledProcessError(return_code, cmd, popen.stderr.read())
-
 
 @installer.route('/')
 def home():
@@ -42,10 +29,11 @@ def gcp():
     if request.method == 'POST':
         gcpfile = request.files['file']
         ostype = request.form['ostype']
+        region = request.form['region']
         vmtype = request.form['vmtype']
         gcpaccname = request.form['gcpaccname']
         gcpfile.save(os.path.join('/installer/gcp_install', "credentials.json"))
-        test = os.system("bash /installer/gcp_install/install.sh " + vmtype + " " + ostype + " " + gcpaccname)
+        test = os.system("bash /installer/gcp_install/install.sh " + vmtype + " " + ostype + " " + gcpaccname + " " + region)
         return "status here"
     else:
         return render_template('gcp.html')
@@ -54,10 +42,14 @@ def gcp():
 @installer.route('/azure', methods=['GET', 'POST'])
 def azure():
     if request.method == 'POST':
-        data = request.files['file']
-        test = os.system("bash ssh_install/install.sh " )
-        return test
+        location = request.form['region']
+        vmtype = request.form['vmtype']
+        ostype = request.form['ostype']
+        os.system("ssh-keygen -b 4096 -t rsa -f /installer/azure_install/id_rsa -q -N ''")
+        os.system("bash /installer/azure_install/install.sh " + location + " " + vmtype + " " + ostype)
+        return send_file("/installer/azure_install/id_rsa", as_attachment=True)
     else:
+        os.system('nohup az login & sleep 2 && sed -i "s#MYCODE#`cat nohup.out`#g" /installer/templates/azure.html')
         return render_template('azure.html')
 
 

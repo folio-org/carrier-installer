@@ -14,6 +14,8 @@ RUN set -x && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
+RUN curl -sL https://aka.ms/InstallAzureCLIDeb | bash 
+
 COPY . /installer
 
 WORKDIR /installer
