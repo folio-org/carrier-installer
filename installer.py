@@ -67,10 +67,13 @@ def ssh():
         return render_template('ssh.html')
 
 
-@installer.route('/local')
+@installer.route('/local', methods=['GET', 'POST'])
 def self():
-    test = os.system("bash local_install/install.sh")
-    return test
+    if request.method == 'POST':
+        ipordns = request.form["public_ip"]
+        os.system("bash local_install/install.sh " + ipordns)
+    else:
+        return render_template('local.html')
 
 
 if __name__ == "__main__":
