@@ -5,12 +5,6 @@
   vars_files:
   - /installer/vars/default.yml
   tasks:
-    - name: Prepare folders
-      file:
-        path: /opt/carrier/
-        state: directory
-        mode: '0755'
-
     - name: Install aptitude using apt
       apt: name=aptitude state=latest update_cache=yes force_apt_get=yes
       when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
@@ -39,47 +33,50 @@
         mode: 'u+x,g+x'
       when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
 
-    - git:
-        repo: https://github.com/carrier-io/carrier-io.git
-        dest: /opt/temp/
-      ignore_errors: yes
+    - name: Copy Files
+      copy:
+        src: /installer/carrier
+        dest: "{{ CARRIER_PATH }}"
 
-    - name: Remove unimportant files
-      shell: mv /opt/temp/dev /opt/carrier && rm -rf /opt/temp/
-
-    - name: Replace App Host
+    - name: Replace app host
       replace:
-        path: /opt/carrier/dev/.env
+        path: "{{ CARRIER_PATH }}/carrier/.env"
         regexp: 'http://localhost'
         replace: "http://{{ APP_HOST }}"
 
     - name: Replace install path
       replace:
-        path: /opt/carrier/dev/.env
+        path: "{{ CARRIER_PATH }}/carrier/.env"
         regexp: '/opt/carrier'
-        replace: "{{ CARRIER_PATH }}"
+        replace: "{{ CARRIER_PATH }}/carrier"
+
+    - name: Replace redis password
+      replace:
+        path: "{{ CARRIER_PATH }}/carrier/.env"
+        regexp: 'REDIS_PASSWORD=password'
+        replace: "REDIS_PASSWORD={{ REDIS_PASSWORD }}"
 
     - name: Create and start services
-      shell: cd /opt/carrier/dev && docker-compose up -d
+      shell: cd "{{ CARRIER_PATH }}/carrier" && docker-compose up -d
       when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
       register: output
 
     - name: Create and start services
-      shell: cd /opt/carrier/dev && /usr/local/bin/docker-compose up -d
+      shell: cd "{{ CARRIER_PATH }}/carrier" && /usr/local/bin/docker-compose up -d
       when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
       register: output
 
     - name: Wait until the services fully load
       command: sleep 35
 
-    - name: Copy files
-      copy:
-        src: /installer/bootstrap.sh
-        dest: /opt/carrier/dev/bootstrap.sh
-        force: yes
+    - name: Replace bootstrap path
+      replace:
+        path: "{{ CARRIER_PATH }}/carrier/bootstrap.sh"
+        regexp: 'CARRIERPATH'
+        replace: "{{ CARRIER_PATH }}"
 
     - name: bootstrap
-      shell: bash /opt/carrier/dev/bootstrap.sh
+      shell: bash "{{ CARRIER_PATH }}/carrier/bootstrap.sh"
 
     - debug:
         var: output
