@@ -71,9 +71,16 @@ def ssh():
 def self():
     if request.method == 'POST':
         ipordns = request.form["public_ip"]
-        os.system("bash local_install/install.sh " + ipordns)
+        carrier_path = request.form["carrier_path"]
+        redis_pass = request.form["redis_pass"]
+        os.system("bash local_install/install.sh " + ipordns + " " + carrier_path + " " + redis_pass)
     else:
         return render_template('local.html')
+
+@installer.route('/localdefault')
+def localdef():
+    os.system("bash local_install/install.sh " + "def")
+    return "status"
 
 
 if __name__ == "__main__":

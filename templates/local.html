@@ -15,11 +15,16 @@
           <label for="public_ip">Public Ip or Public DNS</label>
           <input type="text" class="form-control" name="public_ip" id="public_ip" placeholder="Enter your public ip address or public DNS name">
 
+          <label for="carrier_path">Carrier Path</label>
+          <input type="text" class="form-control" name="carrier_path" id="carrier_path" placeholder="Enter your preferred path (by default /opt/carrier/)">
+
+          <label for="redis_pass">Redis password</label>
+          <input type="text" class="form-control" name="redis_pass" id="redis_pass" placeholder="Enter your password for Redis">
+
         </div>
         <button type="submit" class="btn btn-primary" value="Upload">Install</button>
       </form>
     </div>
-
     <script src="{{ url_for('static', filename='js/jquery.slim.min.js') }}"></script>
     <script src="{{ url_for('static', filename='js/popper.min.js') }}"></script>
     <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
