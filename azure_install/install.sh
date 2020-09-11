@@ -21,6 +21,8 @@ if [[ $3 == centos75 ]]; then
   sed -i 's#OSSELECTS#sku       = "7.5"#g' /installer/azure_install/carrier.tf
   sed -i 's#OSSELECTV#version   = "latest"#g' /installer/azure_install/carrier.tf
 fi
+sed -i "s#/opt#$4#g" /installer/vars/default.yml
+sed -i "s#password#$5#g" /installer/vars/default.yml
 
 terraform init /installer/azure_install
 terraform apply -auto-approve /installer/azure_install

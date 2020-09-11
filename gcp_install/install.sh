@@ -79,6 +79,9 @@ if [[ $4 == "asia-east2" ]]; then
   sed -i "s#yourregion#asia-east2-a#g" /installer/gcp_install/terraform.tfvars
 fi
 
+sed -i "s#/opt#$5#g" /installer/vars/default.yml
+sed -i "s#password#$6#g" /installer/vars/default.yml
+
 cat /installer/gcp_install/terraform.tfvars
 ssh-keygen -t rsa -N "" -f /installer/gcp_install/id_rsa >/dev/null
 

@@ -11,7 +11,8 @@ sed -i "s#your_access_key#$3#g" /installer/aws_install/terraform.tfvars
 sed -i "s#your_secret_key#$4#g" /installer/aws_install/terraform.tfvars
 sed -i "s#your_region#$5#g" /installer/aws_install/terraform.tfvars
 sed -i "s#your_keypairs#${keypairsname}#g" /installer/aws_install/terraform.tfvars
-
+sed -i "s#/opt#$6#g" /installer/vars/default.yml
+sed -i "s#password#$7#g" /installer/vars/default.yml
 
 if [[ $2 == "ubu1804" ]]; then
   accountname="ubuntu"

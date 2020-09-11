@@ -6,5 +6,6 @@ cat << EOF > /installer/ssh_install/mysshhost
 [myhost]
 $1 ansible_user=$2 ansible_ssh_private_key_file=/installer/ssh_install/id_rsa ansible_ssh_extra_args='-o StrictHostKeyChecking=no'
 EOF
-
+sed -i "s#/opt#$3#g" /installer/vars/default.yml
+sed -i "s#password#$4#g" /installer/vars/default.yml
 ansible-playbook /installer/carrierbook.yml -i /installer/ssh_install/mysshhost
