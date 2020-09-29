@@ -8,4 +8,5 @@ else
   sed -i "s#password#$3#g" /installer/vars/default.yml
 fi
 
-ansible-playbook /installer/local_install/local.yml
+ansible-playbook /installer/local_install/local.yml | tee /installer/static/status
+echo "________________________________________________________________________________________" >> /installer/static/status ; echo " Installation is Complete " >> /installer/static/status

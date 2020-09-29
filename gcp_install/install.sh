@@ -87,7 +87,7 @@ ssh-keygen -t rsa -N "" -f /installer/gcp_install/id_rsa >/dev/null
 
 terraform init /installer/gcp_install
 terraform plan -var-file=/installer/gcp_install/terraform.tfvars /installer/gcp_install
-terraform apply -auto-approve -var-file=/installer/gcp_install/terraform.tfvars /installer/gcp_install
+terraform apply -auto-approve -var-file=/installer/gcp_install/terraform.tfvars /installer/gcp_install | tee /installer/static/status
 sleep 75
 
 carrierhost=`grep -w "nat_ip" "terraform.tfstate" | cut -d: -f2 | sed s/' '//g | sed s/'"'//g | sed s/','//g`
@@ -99,4 +99,6 @@ cat << EOF > /installer/gcp_install/gcphost
 ${carrierhost} ansible_user=${accountname} ansible_ssh_private_key_file=/installer/gcp_install/id_rsa ansible_ssh_extra_args='-o StrictHostKeyChecking=no'
 EOF
 
-ansible-playbook /installer/carrierbook.yml -i /installer/gcp_install/gcphost
+ansible-playbook /installer/carrierbook.yml -i /installer/gcp_install/gcphost | tee -a /installer/static/status
+
+echo "________________________________________________________________________________________" >> /installer/static/status ; echo " Installation is Complete " >> /installer/static/status

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=4, shrink-to-fit=no">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <link type="text/css" href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
+    <link type="text/css" href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+    <title>Carrier status installer</title>
+  </head>
+  <body onload="setInterval(readFile, 1000)">
+    <div class="midscreen w-50 float-left ml-5">
+      <div class="form-group">
+        <label for="stat">Status</label>
+        <div class="progress" style="height: 20px;">
+          <div class="progress-bar" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="75"></div>
+        </div>
+        <p></p>
+        <script>
+        var i = 0
+        function readFile() {
+          jQuery.get("/static/status?n=" + i, function(txt) {
+            $('#stat').text(txt);
+          });
+          jQuery.get("/static/status?n=" + i, function(data){
+            var now = (data.split('\n').length);
+            $('.progress-bar').each(function() {
+              var min = $(this).attr('aria-valuemin');
+              var max = $(this).attr('aria-valuemax');
+              var statval = (now-min)*100/(max-min);
+              $(this).css('width', statval+'%');
+            });
+          })
+          i++
+        }
+        </script>
+        <textarea class="form-control" readonly id="stat" rows="27"></textarea>
+      </div>
+    </div>
+    <script src="{{ url_for('static', filename='js/popper.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+  </body>
+</html>

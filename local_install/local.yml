@@ -76,7 +76,7 @@
         replace: "{{ CARRIER_PATH }}"
 
     - name: Restart services
-      shell: docker restart carrier-postgres && sleep 60 && docker restart carrier-vault && sleep 60 && docker restart carrier-galloper
+      shell: docker restart carrier-vault && sleep 30 && docker restart carrier-galloper
 
     - name: bootstrap
       shell: bash "{{ CARRIER_PATH }}/carrier/bootstrap.sh"

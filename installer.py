@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, send_file, redirect
+from flask import Flask, render_template, request, send_file, redirect, url_for
 
 import os
 
@@ -20,8 +20,9 @@ def aws():
         carrier_path = request.form["carrier_path"]
         redis_pass = request.form["redis_pass"]
         awsfile.save(os.path.join('/installer/aws_install', awsfile.filename))
-        test = os.system("bash /installer/aws_install/install.sh " + vmtype + " " + ostype + " " + awsacc + " " + awssec + " " + awsregion + " " + carrier_path + " " + redis_pass)
-        return "status here"
+        os.system('sed -i "s#75#120#g" /installer/templates/status.html')
+        os.system("bash /installer/aws_install/install.sh " + vmtype + " " + ostype + " " + awsacc + " " + awssec + " " + awsregion + " " + carrier_path + " " + redis_pass + " &")
+        return redirect(url_for('status'))
     else:
         return render_template('aws.html')
 
@@ -36,8 +37,9 @@ def gcp():
         redis_pass = request.form["redis_pass"]
         gcpaccname = request.form['gcpaccname']
         gcpfile.save(os.path.join('/installer/gcp_install', "credentials.json"))
-        test = os.system("bash /installer/gcp_install/install.sh " + vmtype + " " + ostype + " " + gcpaccname + " " + region + " " + carrier_path + " " + redis_pass)
-        return "status here"
+        os.system('sed -i "s#75#120#g" /installer/templates/status.html')
+        os.system("bash /installer/gcp_install/install.sh " + vmtype + " " + ostype + " " + gcpaccname + " " + region + " " + carrier_path + " " + redis_pass + " &")
+        return redirect(url_for('status'))
     else:
         return render_template('gcp.html')
 
@@ -51,7 +53,8 @@ def azure():
         carrier_path = request.form["carrier_path"]
         redis_pass = request.form["redis_pass"]
         os.system("ssh-keygen -b 4096 -t rsa -f /installer/azure_install/id_rsa -q -N ''")
-        os.system("bash /installer/azure_install/install.sh " + location + " " + vmtype + " " + ostype + " " + carrier_path + " " + redis_pass)
+        os.system('sed -i "s#75#120#g" /installer/templates/status.html')
+        os.system("bash /installer/azure_install/install.sh " + location + " " + vmtype + " " + ostype + " " + carrier_path + " " + redis_pass + " &")
         return send_file("/installer/azure_install/id_rsa", as_attachment=True)
     else:
         os.system('nohup az login & sleep 2 && sed -i "s#MYCODE#`cat nohup.out`#g" /installer/templates/azure.html')
@@ -67,9 +70,8 @@ def ssh():
         carrier_path = request.form["carrier_path"]
         redis_pass = request.form["redis_pass"]
         sshrsa.save(os.path.join('/installer/ssh_install', "id_rsa"))
-        with open("carrier.log", "r") as f:
-            content = f.read()
-        os.system("bash /installer/ssh_install/install.sh " + sshipaddr + " " + sshuser + " " + carrier_path + " " + redis_pass)
+        os.system("bash /installer/ssh_install/install.sh " + sshipaddr + " " + sshuser + " " + carrier_path + " " + redis_pass + " &")
+        return redirect(url_for('status'))
     else:
         return render_template('ssh.html')
 
@@ -80,15 +82,19 @@ def self():
         ipordns = request.form["public_ip"]
         carrier_path = request.form["carrier_path"]
         redis_pass = request.form["redis_pass"]
-        os.system("bash local_install/install.sh " + ipordns + " " + carrier_path + " " + redis_pass)
-        return redirect("http://" + ipordns, code=200)
+        os.system("bash local_install/install.sh " + ipordns + " " + carrier_path + " " + redis_pass + " &")
+        return redirect(url_for('status'))
     else:
         return render_template('local.html')
 
 @installer.route('/localdefault')
 def localdef():
-    os.system("bash local_install/install.sh " + "def")
-    return "status"
+    os.system("bash local_install/install.sh " + "def &")
+    return redirect(url_for('status'))
+
+@installer.route('/status')
+def status():
+    return render_template('status.html')
 
 
 if __name__ == "__main__":
