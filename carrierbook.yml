@@ -101,13 +101,16 @@
       register: output
 
     - name: Wait until the services fully load
-      command: sleep 35
+      command: sleep 40
 
     - name: Replace bootstrap path
       replace:
         path: "{{ CARRIER_PATH }}/carrier/bootstrap.sh"
         regexp: 'CARRIERPATH'
         replace: "{{ CARRIER_PATH }}"
+
+    - name: Restart services
+      shell: docker restart carrier-vault && sleep 30 && docker restart carrier-galloper
 
     - name: bootstrap
       shell: bash "{{ CARRIER_PATH }}/carrier/bootstrap.sh"
