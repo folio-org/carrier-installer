@@ -1,0 +1,91 @@
+---
+- hosts: 127.0.0.1
+  connection: local
+  become: yes
+  vars_files:
+  - /installer/vars/default.yml
+  tasks:
+    - name: Install aptitude using apt
+      apt: name=aptitude state=latest update_cache=yes force_apt_get=yes
+      when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+    - name: Install required system packages
+      apt: name={{ item }} state=latest update_cache=yes
+      loop: [ 'apt-transport-https', 'git', 'ca-certificates', 'curl', 'software-properties-common']
+      when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+    - name: Install required system packages
+      yum: name={{ item }} state=latest update_cache=true
+      loop: [ 'epel-release', 'yum-utils', 'lvm2', 'git', 'ca-certificates', 'curl' ]
+      when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+
+    - name: Install docker-compose
+      apt:
+        name: docker-compose
+        state: present
+        update_cache: yes
+      when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+    - name: Install docker-compose
+      get_url:
+        url : https://github.com/docker/compose/releases/download/1.25.1-rc1/docker-compose-Linux-x86_64
+        dest: /usr/local/bin/docker-compose
+        mode: 'u+x,g+x'
+      when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+
+    - name: Copy Files
+      copy:
+        src: /installer/carrier-ssl
+        dest: "{{ CARRIER_PATH }}"
+
+    - name: Replace app host
+      replace:
+        path: "{{ CARRIER_PATH }}/carrier-ssl/.env"
+        regexp: 'http://localhost'
+        replace: "https://{{ APP_HOST }}"
+
+    - name: Replace app domain
+      replace:
+          path: "{{ CARRIER_PATH }}/carrier-ssl/.env"
+          regexp: "APP_DOMAIN=localhost"
+          replace: "APP_DOMAIN={{ APP_HOST }}"
+
+    - name: Replace install path
+      replace:
+        path: "{{ CARRIER_PATH }}/carrier-ssl/.env"
+        regexp: '/opt/carrier'
+        replace: "{{ CARRIER_PATH }}/carrier-ssl"
+
+    - name: Replace redis password
+      replace:
+        path: "{{ CARRIER_PATH }}/carrier-ssl/.env"
+        regexp: 'REDIS_PASSWORD=password'
+        replace: "REDIS_PASSWORD={{ REDIS_PASSWORD }}"
+
+    - name: Create and start services
+      shell: cd "{{ CARRIER_PATH }}/carrier-ssl" && docker-compose up -d
+      when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+      register: output
+
+    - name: Create and start services
+      shell: cd "{{ CARRIER_PATH }}/carrier-ssl" && /usr/local/bin/docker-compose up -d
+      when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+      register: output
+
+    - name: Wait until the services fully load
+      command: sleep 35
+
+    - name: Replace bootstrap path
+      replace:
+        path: "{{ CARRIER_PATH }}/carrier-ssl/bootstrap.sh"
+        regexp: 'CARRIERPATH'
+        replace: "{{ CARRIER_PATH }}"
+
+    - name: Restart services
+      shell: docker restart carrier-vault && sleep 30 && docker restart carrier-galloper
+
+    - name: bootstrap
+      shell: bash "{{ CARRIER_PATH }}/carrier-ssl/bootstrap.sh"
+
+    - debug:
+        var: output

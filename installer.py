@@ -79,10 +79,12 @@ def ssh():
 @installer.route('/local', methods=['GET', 'POST'])
 def self():
     if request.method == 'POST':
+        ssl = request.form["ssl"]
         ipordns = request.form["public_ip"]
         carrier_path = request.form["carrier_path"]
         redis_pass = request.form["redis_pass"]
-        os.system("bash local_install/install.sh " + ipordns + " " + carrier_path + " " + redis_pass + " &")
+        sslmail = request.form['sslmail']
+        os.system("bash local_install/install.sh " + ssl + " " + ipordns + " " + carrier_path + " " + redis_pass + " " + sslmail + " &")
         return redirect(url_for('status'))
     else:
         return render_template('local.html')

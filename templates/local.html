@@ -3,13 +3,20 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=4, shrink-to-fit=no">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <link type="text/css" href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
     <link type="text/css" href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
     <title>Carrier local installer</title>
   </head>
-  <body>
+  <body onload="$('#hiddendiv').hide();">
     <div class="midscreen w-50 float-left ml-5">
       <form method="post">
+        <label class="my-1 mr-2" for="inlineFormCustomSelectPref">SSL</label>
+        <select class="custom-select my-1 mr-sm-2" id="ssl" name="ssl">
+          <option value="http">HTTP</option>
+          <option value="https">HTTPS</option>
+        </select>
+        <p></p>
         <div class="form-group">
           <label for="public_ip">Public Ip or Public DNS</label>
           <input type="text" class="form-control" name="public_ip" id="public_ip" placeholder="Enter your public ip address or public DNS name" required>
@@ -22,10 +29,23 @@
           <label for="redis_pass">Redis password</label>
           <input type="password" class="form-control" name="redis_pass" id="redis_pass" placeholder="Enter your password for Redis" required>
         </div>
-        <button type="submit" class="btn btn-primary" value="Upload" onclick="location.reload();">Install</button>
+        <div class="form-group" id="hiddendiv">
+          <label for="sslmail">Email for SSL</label>
+          <input type="text" class="form-control" name="sslmail" id="sslmail" placeholder="Enter your mail that connected to your domain">
+        </div>
+          <button type="submit" class="btn btn-primary" value="Upload" onclick="location.reload();">Install</button>
       </form>
+      <script>
+        $('#ssl').on('change', function() {
+        if ($('#ssl').val() === "http") {
+           $('#hiddendiv').hide();
+        }
+        else {
+           $('#hiddendiv').show();
+        }
+        });
+      </script>
     </div>
-    <script src="{{ url_for('static', filename='js/jquery.slim.min.js') }}"></script>
     <script src="{{ url_for('static', filename='js/popper.min.js') }}"></script>
     <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
   </body>
