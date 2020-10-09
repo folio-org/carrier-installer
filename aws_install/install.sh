@@ -1,9 +1,5 @@
 #!/bin/bash
 
-# $1=vmtype $2=ostype  $3=awsacc  $4=awssec
-
-# if ostype = ubuntu; then accountname=ubuntu
-
 keypairsname=`ls /installer/aws_install | grep pem | cut -d. -f1`
 
 sed -i "s#your_vm#$1#g" /installer/aws_install/terraform.tfvars
