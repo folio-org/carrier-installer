@@ -240,7 +240,7 @@ services:
       - TOKEN=$TOKEN
       - TZ=UTC
     volumes:
-      - /tmp/hub:/tmp/hub
+      - $CARRIER_PATH/hub:/tmp/hub
       - /var/run/docker.sock:/var/run/docker.sock
     labels:
       - 'traefik.enable=false'
