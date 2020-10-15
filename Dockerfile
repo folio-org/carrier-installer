@@ -23,6 +23,7 @@ WORKDIR /installer
 RUN pip3 install Flask
 
 ENV FLASK_APP=installer.py
+ENV FLASK_ENV=development
 EXPOSE 1337
 
 ENTRYPOINT ["python3"]

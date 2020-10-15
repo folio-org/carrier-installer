@@ -6,7 +6,6 @@ docker exec carrier-keycloak /opt/jboss/keycloak/bin/kcadm.sh config credentials
 && docker exec carrier-keycloak /opt/jboss/keycloak/bin/kcadm.sh create groups -r carrier -s name=superadmin \
 && groupid=`docker exec carrier-keycloak /opt/jboss/keycloak/bin/kcadm.sh get groups -r carrier | grep id | cut -d: -f2 | sed s/' '//g | sed s/'"'//g | sed s/','//g` \
 && docker exec carrier-keycloak /opt/jboss/keycloak/bin/kcadm.sh update users/8a9a3cec-5e13-42cd-8736-a0e97598d86e/groups/${groupid} -r carrier -s realm=carrier -s userId=8a9a3cec-5e13-42cd-8736-a0e97598d86e -s groupId=${groupid} -n \
-&& docker cp CARRIERPATH/carrier/keycloak/themes/src/main/resources/theme/carrier carrier-keycloak:/opt/jboss/keycloak/themes \
 && docker exec carrier-keycloak /opt/jboss/keycloak/bin/kcadm.sh update realms/carrier -s "loginTheme=carrier"
 
 docker exec carrier-influx bash -c "influx -execute 'create database jmeter'"
