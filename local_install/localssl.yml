@@ -76,10 +76,10 @@
       command: sleep 35
 
     - name: Replace influx password
-        replace:
-          path: "{{ CARRIER_PATH }}/carrier/bootstrap.sh"
-          regexp: 'INFLUXPASSWORD'
-          replace: "{{ INFLUX_PASSWORD }}"
+      replace:
+        path: "{{ CARRIER_PATH }}/carrier/bootstrap.sh"
+        regexp: 'INFLUXPASSWORD'
+        replace: "{{ INFLUX_PASSWORD }}"
 
 
     - name: Restart services
