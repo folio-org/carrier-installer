@@ -113,6 +113,7 @@ services:
       - POSTGRES_USER=$POSTGRES_USER
       - POSTGRES_PASSWORD=$POSTGRES_PASSWORD
       - VAULT_URL=$VAULT_URL
+      - INFLUX_PASSWORD=$INFLUX_PASSWORD
     labels:
       - 'traefik.enable=true'
       - 'traefik.http.routers.galloper.rule=PathPrefix(`/`)'
@@ -128,6 +129,7 @@ services:
       - INFLUXDB_DATA_DIR=$INFLUXDB_DATA_DIR
       - INFLUXDB_DATA_WAL_DIR=$INFLUXDB_DATA_WAL_DIR
       - INFLUXDB_HTTP_ENABLED=$INFLUXDB_HTTP_ENABLED
+      - INFLUXDB_HTTP_AUTH_ENABLED=$INFLUXDB_HTTP_AUTH_ENABLED
     volumes:
       - $CARRIER_PATH/influx:/var/lib/influxdb
     ports:

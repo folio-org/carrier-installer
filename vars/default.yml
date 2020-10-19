@@ -2,3 +2,4 @@
 APP_HOST: localhost
 CARRIER_PATH: /opt
 REDIS_PASSWORD: password
+INFLUX_PASSWORD: password
