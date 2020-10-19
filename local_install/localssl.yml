@@ -62,6 +62,12 @@
         regexp: 'REDIS_PASSWORD=password'
         replace: "REDIS_PASSWORD={{ REDIS_PASSWORD }}"
 
+    - name: Replace redis password
+      replace:
+        path: "{{ CARRIER_PATH }}/carrier-ssl/.env"
+        regexp: 'INFLUX_PASSWORD=password'
+        replace: "INFLUX_PASSWORD={{ INFLUX_PASSWORD }}"
+
     - name: Create and start services
       shell: cd "{{ CARRIER_PATH }}/carrier-ssl" && docker-compose up -d
       when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
@@ -77,7 +83,7 @@
 
     - name: Replace influx password
       replace:
-        path: "{{ CARRIER_PATH }}/carrier/bootstrap.sh"
+        path: "{{ CARRIER_PATH }}/carrier-ssl/bootstrap.sh"
         regexp: 'INFLUXPASSWORD'
         replace: "{{ INFLUX_PASSWORD }}"
 
