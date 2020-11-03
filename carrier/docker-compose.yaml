@@ -114,6 +114,7 @@ services:
       - POSTGRES_PASSWORD=$POSTGRES_PASSWORD
       - VAULT_URL=$VAULT_URL
       - INFLUX_PASSWORD=$INFLUX_PASSWORD
+      - INFLUX_USER=$INFLUX_USERNAME
     labels:
       - 'traefik.enable=true'
       - 'traefik.http.routers.galloper.rule=PathPrefix(`/`)'
@@ -172,7 +173,7 @@ services:
     user: root
     container_name: carrier-grafana
   loki:
-    image: grafana/loki:latest
+    image: grafana/loki:1.6.0
     restart: unless-stopped
     ports:
       - "3100:3100"

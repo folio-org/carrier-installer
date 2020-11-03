@@ -4,17 +4,23 @@ docker exec carrier-keycloak /opt/jboss/keycloak/bin/kcadm.sh config credentials
 && docker exec carrier-keycloak /opt/jboss/keycloak/bin/kcadm.sh update realms/master -s sslRequired=NONE \
 && docker exec carrier-keycloak /opt/jboss/keycloak/bin/kcadm.sh update realms/carrier -s sslRequired=NONE \
 && docker exec carrier-keycloak /opt/jboss/keycloak/bin/kcadm.sh create groups -r carrier -s name=superadmin \
+&& docker exec carrier-keycloak /opt/jboss/keycloak/bin/kcadm.sh create groups -r carrier -s name=grafana \
 && groupid=`docker exec carrier-keycloak /opt/jboss/keycloak/bin/kcadm.sh get groups -r carrier | grep id | cut -d: -f2 | sed s/' '//g | sed s/'"'//g | sed s/','//g` \
-&& docker exec carrier-keycloak /opt/jboss/keycloak/bin/kcadm.sh update users/8a9a3cec-5e13-42cd-8736-a0e97598d86e/groups/${groupid} -r carrier -s realm=carrier -s userId=8a9a3cec-5e13-42cd-8736-a0e97598d86e -s groupId=${groupid} -n \
+&& docker exec carrier-keycloak /opt/jboss/keycloak/bin/kcadm.sh update users/8a9a3cec-5e13-42cd-8736-a0e97598d86e/groups/${groupid:0:36} -r carrier -s realm=carrier -s userId=8a9a3cec-5e13-42cd-8736-a0e97598d86e -s groupId=${groupid:0:36} -n \
+&& docker exec carrier-keycloak /opt/jboss/keycloak/bin/kcadm.sh update users/8a9a3cec-5e13-42cd-8736-a0e97598d86e/groups/${groupid:37:72} -r carrier -s realm=carrier -s userId=8a9a3cec-5e13-42cd-8736-a0e97598d86e -s groupId=${groupid:37:72} -n \
 && docker exec carrier-keycloak /opt/jboss/keycloak/bin/kcadm.sh update realms/carrier -s "loginTheme=carrier"
 
-docker exec carrier-influx bash -c "influx -execute \"create user admin with password 'INFLUXPASSWORD' with all privileges;\""
-docker exec carrier-influx bash -c "influx -username 'admin' -password 'INFLUXPASSWORD' -execute 'create database jmeter'"
-docker exec carrier-influx bash -c "influx -username 'admin' -password 'INFLUXPASSWORD' -execute 'create database comparison'"
-docker exec carrier-influx bash -c "influx -username 'admin' -password 'INFLUXPASSWORD' -execute 'create database gatling'"
-docker exec carrier-influx bash -c "influx -username 'admin' -password 'INFLUXPASSWORD' -execute 'create database prodsec'"
-docker exec carrier-influx bash -c "influx -username 'admin' -password 'INFLUXPASSWORD' -execute 'create database perfui'"
-docker exec carrier-influx bash -c "influx -username 'admin' -password 'INFLUXPASSWORD' -execute 'create database telegraf'"
-docker exec carrier-influx bash -c "influx -username 'admin' -password 'INFLUXPASSWORD' -execute 'create database thresholds'"
-docker exec carrier-influx bash -c "influx -username 'admin' -password 'INFLUXPASSWORD' -execute 'create database profiling'"
+docker cp /installer/grafana/datasources/. carrier-grafana:/etc/grafana/provisioning/datasources
+docker cp /installer/grafana/def.yml carrier-grafana:/etc/grafana/provisioning/dashboards
+docker cp /installer/grafana/dashboards/. carrier-grafana:/etc/grafana/provisioning/dashboards
+docker restart carrier-grafana
 
+docker exec carrier-influx bash -c "influx -execute \"create user INFLUXUSERNAME with password 'INFLUXPASSWORD' with all privileges;\""
+docker exec carrier-influx bash -c "influx -username 'INFLUXUSERNAME' -password 'INFLUXPASSWORD' -execute 'create database jmeter'"
+docker exec carrier-influx bash -c "influx -username 'INFLUXUSERNAME' -password 'INFLUXPASSWORD' -execute 'create database comparison'"
+docker exec carrier-influx bash -c "influx -username 'INFLUXUSERNAME' -password 'INFLUXPASSWORD' -execute 'create database gatling'"
+docker exec carrier-influx bash -c "influx -username 'INFLUXUSERNAME' -password 'INFLUXPASSWORD' -execute 'create database prodsec'"
+docker exec carrier-influx bash -c "influx -username 'INFLUXUSERNAME' -password 'INFLUXPASSWORD' -execute 'create database perfui'"
+docker exec carrier-influx bash -c "influx -username 'INFLUXUSERNAME' -password 'INFLUXPASSWORD' -execute 'create database telegraf'"
+docker exec carrier-influx bash -c "influx -username 'INFLUXUSERNAME' -password 'INFLUXPASSWORD' -execute 'create database thresholds'"
+docker exec carrier-influx bash -c "influx -username 'INFLUXUSERNAME' -password 'INFLUXPASSWORD' -execute 'create database profiling'"
