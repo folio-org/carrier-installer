@@ -22,7 +22,9 @@ if [[ $3 == centos75 ]]; then
   sed -i 's#OSSELECTV#version   = "latest"#g' /installer/azure_install/carrier.tf
 fi
 sed -i "s#/opt#$4#g" /installer/vars/default.yml
-sed -i "s#password#$5#g" /installer/vars/default.yml
+sed -i "s#REDIS_PASSWORD: password#REDIS_PASSWORD: $5#g" /installer/vars/default.yml
+sed -i "s#INFLUX_PASSWORD: password#INFLUX_PASSWORD: $6#g" /installer/vars/default.yml
+sed -i "s#INFLUX_USERNAME: password#INFLUX_USERNAME: $7#g" /installer/vars/default.yml
 
 terraform init /installer/azure_install
 terraform apply -auto-approve /installer/azure_install

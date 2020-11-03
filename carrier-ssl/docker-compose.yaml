@@ -83,6 +83,7 @@ services:
       - REDIS_HOST=carrier-redis
       - REDIS_DB=$AUTH_REDIS_DB
       - REDIS_PASSWORD=$REDIS_PASSWORD
+      - INFLUX_USER=$INFLUX_USER
     volumes:
       - $CARRIER_PATH/carrier-auth/settings.yaml:$AUTH_CONFIG_FILENAME
     labels:
@@ -120,6 +121,7 @@ services:
       - POSTGRES_PASSWORD=$POSTGRES_PASSWORD
       - VAULT_URL=$VAULT_URL
       - INFLUX_PASSWORD=$INFLUX_PASSWORD
+      - INFLUX_USER=$INFLUX_USERNAME
     labels:
       - 'traefik.enable=true'
       - 'traefik.http.routers.galloper.rule=Host(`$APP_DOMAIN`) && PathPrefix(`/`)'
@@ -182,7 +184,7 @@ services:
     user: root
     container_name: carrier-grafana
   loki:
-    image: grafana/loki:latest
+    image: grafana/loki:1.6.0
     restart: unless-stopped
     ports:
       - "3100:3100"

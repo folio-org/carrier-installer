@@ -68,6 +68,18 @@
         regexp: 'INFLUX_PASSWORD=password'
         replace: "INFLUX_PASSWORD={{ INFLUX_PASSWORD }}"
 
+    - name: Replace influx password
+      replace:
+        path: "{{ CARRIER_PATH }}/carrier/.env"
+        regexp: 'INFLUX_PASSWORD=password'
+        replace: "INFLUX_PASSWORD={{ INFLUX_PASSWORD }}"
+
+    - name: Replace influx username
+      replace:
+        path: "{{ CARRIER_PATH }}/carrier/.env"
+        regexp: 'INFLUX_USERNAME=admin'
+        replace: "INFLUX_USERNAME={{ INFLUX_USERNAME }}"
+
     - name: Create and start services
       shell: cd "{{ CARRIER_PATH }}/carrier-ssl" && docker-compose up -d
       when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
