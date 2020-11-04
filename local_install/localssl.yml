@@ -38,6 +38,11 @@
         src: /installer/carrier-ssl
         dest: "{{ CARRIER_PATH }}"
 
+    - name: Copy grafana
+      copy:
+        src: /installer/grafana
+        dest: "{{ CARRIER_PATH }}"
+
     - name: Replace app host
       replace:
         path: "{{ CARRIER_PATH }}/carrier-ssl/.env"
@@ -70,13 +75,13 @@
 
     - name: Replace influx password
       replace:
-        path: "{{ CARRIER_PATH }}/carrier/.env"
+        path: "{{ CARRIER_PATH }}/carrier-ssl/.env"
         regexp: 'INFLUX_PASSWORD=password'
         replace: "INFLUX_PASSWORD={{ INFLUX_PASSWORD }}"
 
     - name: Replace influx username
       replace:
-        path: "{{ CARRIER_PATH }}/carrier/.env"
+        path: "{{ CARRIER_PATH }}/carrier-ssl/.env"
         regexp: 'INFLUX_USERNAME=admin'
         replace: "INFLUX_USERNAME={{ INFLUX_USERNAME }}"
 
@@ -99,6 +104,11 @@
         regexp: 'INFLUXPASSWORD'
         replace: "{{ INFLUX_PASSWORD }}"
 
+    - name: Bootstrap influx username
+      replace:
+        path: "{{ CARRIER_PATH }}/carrier-ssl/bootstrap.sh"
+        regexp: 'INFLUXUSERNAME'
+        replace: "{{ INFLUX_USERNAME }}"
 
     - name: Restart services
       shell: docker restart carrier-vault && sleep 30 && docker restart carrier-galloper

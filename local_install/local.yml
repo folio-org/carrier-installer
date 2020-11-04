@@ -92,6 +92,12 @@
         regexp: 'INFLUXPASSWORD'
         replace: "{{ INFLUX_PASSWORD }}"
 
+    - name: Replace influx password
+      replace:
+        path: "{{ CARRIER_PATH }}/carrier/bootstrap.sh"
+        regexp: 'INFLUXPASSWORD'
+        replace: "{{ INFLUX_PASSWORD }}"
+
     - name: Bootstrap influx username
       replace:
         path: "{{ CARRIER_PATH }}/carrier/bootstrap.sh"
