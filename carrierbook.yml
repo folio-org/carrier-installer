@@ -95,7 +95,7 @@
         path: "{{ CARRIER_PATH }}/carrier/.env"
         regexp: 'INFLUX_PASSWORD=password'
         replace: "INFLUX_PASSWORD={{ INFLUX_PASSWORD }}"
-        
+
     - name: Replace influx username
       replace:
         path: "{{ CARRIER_PATH }}/carrier/.env"
@@ -120,6 +120,12 @@
         path: "{{ CARRIER_PATH }}/carrier/bootstrap.sh"
         regexp: 'INFLUXPASSWORD'
         replace: "{{ INFLUX_PASSWORD }}"
+
+    - name: Bootstrap influx username
+      replace:
+        path: "{{ CARRIER_PATH }}/carrier/bootstrap.sh"
+        regexp: 'INFLUXUSERNAME'
+        replace: "{{ INFLUX_USERNAME }}"
 
     - name: Restart services
       shell: docker restart carrier-vault && sleep 30 && docker restart carrier-galloper

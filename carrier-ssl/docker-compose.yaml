@@ -83,7 +83,6 @@ services:
       - REDIS_HOST=carrier-redis
       - REDIS_DB=$AUTH_REDIS_DB
       - REDIS_PASSWORD=$REDIS_PASSWORD
-      - INFLUX_USER=$INFLUX_USER
     volumes:
       - $CARRIER_PATH/carrier-auth/settings.yaml:$AUTH_CONFIG_FILENAME
     labels:

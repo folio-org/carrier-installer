@@ -9,11 +9,11 @@ EOF
 sed -i "s#/opt#$3#g" /installer/vars/default.yml
 sed -i "s#REDIS_PASSWORD: password#REDIS_PASSWORD: $4#g" /installer/vars/default.yml
 sed -i "s#INFLUX_PASSWORD: password#INFLUX_PASSWORD: $5#g" /installer/vars/default.yml
-sed -i "s#INFLUX_USERNAME: password#INFLUX_USERNAME: $6#g" /installer/vars/default.yml
-sed -i "s#password: password#password: $5#g" /installer/grafana/datasources/gatling.yaml
-sed -i "s#user: admin#user: $6#g" /installer/grafana/datasources/gatling.yaml
-sed -i "s#password: password#password: $5#g" /installer/grafana/datasources/jmeter.yaml
-sed -i "s#user: admin#user: $6#g" /installer/grafana/datasources/jmeter.yaml
-sed -i "s#password: password#password: $5#g" /installer/grafana/datasources/telegraf.yaml
-sed -i "s#user: admin#user: $6#g" /installer/grafana/datasources/telegraf.yaml
+sed -i "s#INFLUX_USERNAME: admin#INFLUX_USERNAME: $6#g" /installer/vars/default.yml
+sed -i "s#password: password#password: $5#g" /installer/grafana/datasources/gatling.yml
+sed -i "s#user: admin#user: $6#g" /installer/grafana/datasources/gatling.yml
+sed -i "s#password: password#password: $5#g" /installer/grafana/datasources/jmeter.yml
+sed -i "s#user: admin#user: $6#g" /installer/grafana/datasources/jmeter.yml
+sed -i "s#password: password#password: $5#g" /installer/grafana/datasources/telegraf.yml
+sed -i "s#user: admin#user: $6#g" /installer/grafana/datasources/telegraf.yml
 ansible-playbook /installer/carrierbook.yml -i /installer/ssh_install/mysshhost
