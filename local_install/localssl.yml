@@ -68,6 +68,18 @@
         regexp: 'INFLUX_PASSWORD=password'
         replace: "INFLUX_PASSWORD={{ INFLUX_PASSWORD }}"
 
+    - name: Replace influx password
+      replace:
+        path: "{{ CARRIER_PATH }}/carrier-ssl/.env"
+        regexp: 'INFLUX_PASSWORD=password'
+        replace: "INFLUX_PASSWORD={{ INFLUX_PASSWORD }}"
+
+    - name: Replace influx username
+      replace:
+        path: "{{ CARRIER_PATH }}/carrier-ssl/.env"
+        regexp: 'INFLUX_USERNAME=admin'
+        replace: "INFLUX_USERNAME={{ INFLUX_USERNAME }}"
+
     - name: Create and start services
       shell: cd "{{ CARRIER_PATH }}/carrier-ssl" && docker-compose up -d
       when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
@@ -87,6 +99,11 @@
         regexp: 'INFLUXPASSWORD'
         replace: "{{ INFLUX_PASSWORD }}"
 
+    - name: Bootstrap influx username
+      replace:
+        path: "{{ CARRIER_PATH }}/carrier-ssl/bootstrap.sh"
+        regexp: 'INFLUXUSERNAME'
+        replace: "{{ INFLUX_USERNAME }}"
 
     - name: Restart services
       shell: docker restart carrier-vault && sleep 30 && docker restart carrier-galloper
