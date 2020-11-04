@@ -38,11 +38,6 @@
         src: /installer/carrier
         dest: "{{ CARRIER_PATH }}"
 
-    - name: Copy grafana
-      copy:
-        src: /installer/grafana
-        dest: "{{ CARRIER_PATH }}"
-
     - name: Replace app host
       replace:
         path: "{{ CARRIER_PATH }}/carrier/.env"

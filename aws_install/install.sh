@@ -11,6 +11,12 @@ sed -i "s#/opt#$6#g" /installer/vars/default.yml
 sed -i "s#REDIS_PASSWORD: password#REDIS_PASSWORD: $7#g" /installer/vars/default.yml
 sed -i "s#INFLUX_PASSWORD: password#INFLUX_PASSWORD: $8#g" /installer/vars/default.yml
 sed -i "s#INFLUX_USERNAME: admin#INFLUX_USERNAME: $9#g" /installer/vars/default.yml
+sed -i "s#password: password#password: $8#g" /installer/grafana/datasources/gatling.yml
+sed -i "s#user: admin#user: $9#g" /installer/grafana/datasources/gatling.yml
+sed -i "s#password: password#password: $8#g" /installer/grafana/datasources/jmeter.yml
+sed -i "s#user: admin#user: $9#g" /installer/grafana/datasources/jmeter.yml
+sed -i "s#password: password#password: $8#g" /installer/grafana/datasources/telegraf.yml
+sed -i "s#user: admin#user: $9#g" /installer/grafana/datasources/telegraf.yml
 
 if [[ $2 == "ubu1804" ]]; then
   accountname="ubuntu"
