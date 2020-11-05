@@ -309,15 +309,27 @@ services:
         max-file: "5"
         max-size: "10m"
     restart: unless-stopped
-    container_name: observer-hub
-    network_mode: "host"
+    container_name: carrier-observer-hub
     environment:
-      - TOKEN=$TOKEN
-      - TZ=UTC
+      - PORT=4445
     volumes:
       - $CARRIER_PATH/hub:/tmp/hub
       - /var/run/docker.sock:/var/run/docker.sock
+    network_mode: "host"
     labels:
       - 'traefik.enable=false'
-    ports:
-      - 4444:4444
+  grid_router:
+    image: aerokube/ggr:latest-release
+    logging:
+      driver: "json-file"
+      options:
+        max-file: "5"
+        max-size: "10m"
+    container_name: carrier-hub-router
+    restart: unless-stopped
+    network_mode: "host"
+    volumes:
+      - $CARRIER_PATH/grid-router/:/etc/grid-router:ro
+    entrypoint: ["/usr/bin/ggr", "-guests-allowed", "-guests-quota", "test", "-listen", ":4444", "-users", "/etc/grid-router/users.htpasswd", "-quotaDir", "/etc/grid-router/quota"]
+    labels:
+      - 'traefik.enable=true'
