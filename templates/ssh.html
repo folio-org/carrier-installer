@@ -14,7 +14,7 @@
       <form method="post" enctype="multipart/form-data">
         <div class="form-group">
           <label for="sshrsa">Private ssh key</label>
-          <input type="file" class="form-control-file" id="sshrsa" name="file">
+          <input type="file" class="form-control-file" id="sshrsa" name="file" required>
         </div>
         <div class="form-group">
           <label for="ipaddr">IP Address</label>
@@ -29,16 +29,16 @@
           <input type="text" class="form-control" name="carrier_path" id="carrier_path" placeholder="Enter your preferred path (by default /opt)">
         </div>
         <div class="form-group">
-          <label for="influx_user">Influx username</label>
-          <input type="text" class="form-control" name="influx_user" id="influx_user" placeholder="Enter your username for InfluxDB" required>
+          <label for="redis_pass">Redis password</label>
+          <input type="password" class="form-control" name="redis_pass" id="redis_pass" placeholder="Enter your password for Redis (by default - password)">
         </div>
         <div class="form-group">
-          <label for="redis_pass">Redis password</label>
-          <input type="password" class="form-control" name="redis_pass" id="redis_pass" placeholder="Enter your password for Redis">
+          <label for="influx_user">Influx username</label>
+          <input type="text" class="form-control" name="influx_user" id="influx_user" placeholder="Enter your username for InfluxDB (by default - admin)">
         </div>
         <div class="form-group">
           <label for="influx_pass">Influx password</label>
-          <input type="password" class="form-control" name="influx_pass" id="influx_pass" placeholder="Enter your password for InfluxDB">
+          <input type="password" class="form-control" name="influx_pass" id="influx_pass" placeholder="Enter your password for InfluxDB (by default - password)">
         </div>
         <button type="submit" class="btn btn-primary" value="Upload">Install</button>
       </form>

@@ -11,16 +11,17 @@ def home():
 @installer.route('/aws', methods=['GET', 'POST'])
 def aws():
     if request.method == 'POST':
-        awsfile = request.files['file']
-        ostype = request.form['ostype']
-        vmtype = request.form['vmtype']
-        awsacc = request.form['accesskey']
-        awssec = request.form['secretkey']
-        awsregion = request.form['region']
-        carrier_path = request.form.get("carrier_path", "/opt")
-        redis_pass = request.form.get("redis_pass", "password")
-        influx_pass = request.form.get("influx_pass", "password")
-        influx_user = request.form.get("influx_user", "admin")
+        args = request.form
+        awsfile = args['file']
+        ostype = args['ostype']
+        vmtype = args['vmtype']
+        awsacc = args['accesskey']
+        awssec = args['secretkey']
+        awsregion = args['region']
+        carrier_path = args.get("carrier_path") if args.get("carrier_path") != "" else "/opt"
+        redis_pass = args.get("redis_pass") if args.get("redis_pass") != "" else "password"
+        influx_pass = args.get("influx_pass") if args.get("influx_pass") != "" else "password"
+        influx_user = args.get("influx_user") if args.get("influx_user") != "" else "admin"
         awsfile.save(os.path.join('/installer/aws_install', awsfile.filename))
         os.system('sed -i "s#76#120#g" /installer/templates/status.html')
         os.system(f"bash /installer/aws_install/install.sh {vmtype} {ostype} {awsacc} {awssec} {awsregion} {carrier_path} {redis_pass} {influx_pass} {influx_user} &")
@@ -31,14 +32,15 @@ def aws():
 @installer.route('/gcp', methods=['GET', 'POST'])
 def gcp():
     if request.method == 'POST':
-        gcpfile = request.files['file']
-        ostype = request.form['ostype']
-        region = request.form['region']
-        vmtype = request.form['vmtype']
-        carrier_path = request.form.get("carrier_path", "/opt")
-        redis_pass = request.form.get("redis_pass", "password")
-        influx_pass = request.form.get("influx_pass", "password")
-        influx_user = request.form.get("influx_user", "admin")
+        args = request.form
+        gcpfile = args['file']
+        ostype = args['ostype']
+        region = args['region']
+        vmtype = args['vmtype']
+        carrier_path = args.get("carrier_path") if args.get("carrier_path") != "" else "/opt"
+        redis_pass = args.get("redis_pass") if args.get("redis_pass") != "" else "password"
+        influx_pass = args.get("influx_pass") if args.get("influx_pass") != "" else "password"
+        influx_user = args.get("influx_user") if args.get("influx_user") != "" else "admin"
         gcpaccname = request.form['gcpaccname']
         gcpfile.save(os.path.join('/installer/gcp_install', "credentials.json"))
         os.system('sed -i "s#76#120#g" /installer/templates/status.html')
@@ -51,13 +53,14 @@ def gcp():
 @installer.route('/azure', methods=['GET', 'POST'])
 def azure():
     if request.method == 'POST':
-        location = request.form['region']
-        vmtype = request.form['vmtype']
-        ostype = request.form['ostype']
-        carrier_path = request.form.get("carrier_path", "/opt")
-        redis_pass = request.form.get("redis_pass", "password")
-        influx_pass = request.form.get("influx_pass", "password")
-        influx_user = request.form.get("influx_user", "admin")
+        args = request.form
+        location = args['region']
+        vmtype = args['vmtype']
+        ostype = args['ostype']
+        carrier_path = args.get("carrier_path") if args.get("carrier_path") != "" else "/opt"
+        redis_pass = args.get("redis_pass") if args.get("redis_pass") != "" else "password"
+        influx_pass = args.get("influx_pass") if args.get("influx_pass") != "" else "password"
+        influx_user = args.get("influx_user") if args.get("influx_user") != "" else "admin"
         os.system("ssh-keygen -b 4096 -t rsa -f /installer/azure_install/id_rsa -q -N ''")
         os.system('sed -i "s#76#120#g" /installer/templates/status.html')
         os.system(f"bash /installer/azure_install/install.sh {location} {vmtype} {ostype} {carrier_path} {redis_pass} {influx_pass} {influx_user} &")
@@ -70,13 +73,14 @@ def azure():
 @installer.route('/ssh', methods=['GET', 'POST'])
 def ssh():
     if request.method == 'POST':
-        sshipaddr = request.form['ipaddr']
-        sshuser = request.form['username']
-        sshrsa = request.files['file']
-        carrier_path = request.form.get("carrier_path", "/opt")
-        redis_pass = request.form.get("redis_pass", "password")
-        influx_pass = request.form.get("influx_pass", "password")
-        influx_user = request.form.get("influx_user", "admin")
+        args = request.form
+        sshipaddr = args['ipaddr']
+        sshuser = args['username']
+        sshrsa = args['file']
+        carrier_path = args.get("carrier_path") if args.get("carrier_path") != "" else "/opt"
+        redis_pass = args.get("redis_pass") if args.get("redis_pass") != "" else "password"
+        influx_pass = args.get("influx_pass") if args.get("influx_pass") != "" else "password"
+        influx_user = args.get("influx_user") if args.get("influx_user") != "" else "admin"
         sshrsa.save(os.path.join('/installer/ssh_install', "id_rsa"))
         os.system(f"bash /installer/ssh_install/install.sh {sshipaddr} {sshuser} {carrier_path} {redis_pass} {influx_pass} {influx_user} &")
         return redirect(url_for('status'))
@@ -87,13 +91,14 @@ def ssh():
 @installer.route('/local', methods=['GET', 'POST'])
 def self():
     if request.method == 'POST':
-        ssl = request.form["ssl"]
-        ipordns = request.form["public_ip"].replace("http://", "").replace("https://", "")
-        carrier_path = request.form.get("carrier_path", "/opt")
-        redis_pass = request.form.get("redis_pass", "password")
-        influx_pass = request.form.get("influx_pass", "password")
-        influx_user = request.form.get("influx_user", "admin")
-        sslmail = request.form['sslmail']
+        args = request.form
+        ssl = args["ssl"]
+        ipordns = args["public_ip"].replace("http://", "").replace("https://", "")
+        carrier_path = args.get("carrier_path") if args.get("carrier_path") != "" else "/opt"
+        redis_pass = args.get("redis_pass") if args.get("redis_pass") != "" else "password"
+        influx_pass = args.get("influx_pass") if args.get("influx_pass") != "" else "password"
+        influx_user = args.get("influx_user") if args.get("influx_user") != "" else "admin"
+        sslmail = args['sslmail']
         os.system(f"bash local_install/install.sh {ssl} {ipordns} {carrier_path} {redis_pass} {influx_pass} {influx_user} {sslmail} &")
         return redirect(url_for('status'))
     else:
