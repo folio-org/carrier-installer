@@ -16,7 +16,3 @@ docker cp /installer/grafana/dashboards/. carrier-grafana:/etc/grafana/provision
 docker restart carrier-grafana
 
 docker exec carrier-influx bash -c "influx -execute \"create user INFLUXUSERNAME with password 'INFLUXPASSWORD' with all privileges;\""
-docker exec carrier-influx bash -c "influx -username 'INFLUXUSERNAME' -password 'INFLUXPASSWORD' -execute 'create database jmeter WITH DURATION 180d REPLICATION 1 SHARD DURATION 7d NAME autogen'"
-docker exec carrier-influx bash -c "influx -username 'INFLUXUSERNAME' -password 'INFLUXPASSWORD' -execute 'create database comparison WITH DURATION 180d REPLICATION 1 SHARD DURATION 7d NAME autogen'"
-docker exec carrier-influx bash -c "influx -username 'INFLUXUSERNAME' -password 'INFLUXPASSWORD' -execute 'create database gatling WITH DURATION 180d REPLICATION 1 SHARD DURATION 7d NAME autogen'"
-docker exec carrier-influx bash -c "influx -username 'INFLUXUSERNAME' -password 'INFLUXPASSWORD' -execute 'create database telegraf WITH DURATION 180d REPLICATION 1 SHARD DURATION 7d NAME autogen'"
