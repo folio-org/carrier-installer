@@ -4,7 +4,7 @@ Install Docker.
 Required ports for SSH and Local installation:
 22, 80, 3100, 6379, 8086.
 ### How to use
-!! Make sure that you have at least 16GB of RAM on VM where you want install Carrier !!  
+!! Make sure that you have at least 32GB of RAM on VM where you want install Carrier !!  
 !! Make sure that you have public ip address!!
 #### Local installation:
 
