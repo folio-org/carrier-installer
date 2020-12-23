@@ -17,6 +17,8 @@ sed -i "s#password: password#password: $8#g" /installer/grafana/datasources/jmet
 sed -i "s#user: admin#user: $9#g" /installer/grafana/datasources/jmeter.yml
 sed -i "s#password: password#password: $8#g" /installer/grafana/datasources/telegraf.yml
 sed -i "s#user: admin#user: $9#g" /installer/grafana/datasources/telegraf.yml
+sed -i "s#your_disk_size#${10}#g" /installer/aws_install/terraform.tfvars
+
 
 if [[ $2 == "ubu1804" ]]; then
   accountname="ubuntu"
@@ -123,7 +125,7 @@ if [[ $2 == "rhel8" ]]; then
 fi
 
 terraform init /installer/aws_install
-terraform apply -auto-approve -var-file=/installer/aws_install/terraform.tfvars /installer/aws_install
+terraform apply -auto-approve -var-file=/installer/aws_install/terraform.tfvars -no-color /installer/aws_install | tee -a /installer/static/status
 sleep 75
 
 carrierhost=`grep -w "public_ip" "terraform.tfstate" | cut -d: -f2 | sed s/' '//g | sed s/'"'//g | sed s/','//g`
@@ -137,5 +139,8 @@ EOF
 
 chmod 400 /installer/aws_install/${keypairsname}.pem
 
-ansible all -m ping -i /installer/aws_install/awshost
-ansible-playbook /installer/carrierbook.yml -i /installer/aws_install/awshost
+sed -i "s#/dev/sdb#/dev/xvdh#g" /installer/fdisk.yml
+ansible-playbook /installer/fdisk.yml -i /installer/aws_install/awshost
+ansible-playbook /installer/carrierbook.yml -i /installer/aws_install/awshost | tee -a /installer/static/status
+
+echo "________________________________________________________________________________________" >> /installer/static/status ; echo " Installation is Complete " >> /installer/static/status
