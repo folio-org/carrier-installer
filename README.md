@@ -2,7 +2,7 @@
 
 ### Local installation:
 #### Prerequisites
-Make sure that you have at least 16GB of RAM on VM where you want install Carrier  
+Make sure that you have at least 32GB of RAM on VM where you want install Carrier  
 Required ports:
 22, 80, 3100, 6379, 8086.
 
