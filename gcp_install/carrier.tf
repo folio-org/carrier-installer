@@ -1,13 +1,38 @@
 provider "google" {
-  credentials = "${file("/installer/gcp_install/credentials.json")}"
   project     = "${var.project_name}"
   zone        = "${var.zone}"
 }
 
+resource "google_compute_disk" "default" {
+  name  = "carrier-disk"
+  zone  = "${var.zone}"
+  size = "${var.disk_size}"
+}
+
+resource "google_compute_attached_disk" "default" {
+  disk     = google_compute_disk.default.id
+  instance = google_compute_instance.vm_instance.id
+}
+
+resource "google_compute_firewall" "default" {
+ name    = "carrier-firewall"
+ network = google_compute_network.default.name
+
+ allow {
+   protocol = "tcp"
+   ports    = ["22", "80", "443", "8080", "8086", "3100", "4444", "9999"]
+ }
+}
+
+resource "google_compute_network" "default" {
+  name = "carrier-network"
+}
 
 resource "google_compute_instance" "vm_instance" {
   name         = "carrier"
   machine_type = "vmtype"
+
+  tags = ["http-server", "https-server"]
 
   boot_disk {
     initialize_params {
@@ -15,8 +40,12 @@ resource "google_compute_instance" "vm_instance" {
     }
   }
 
+  lifecycle {
+    ignore_changes = [attached_disk]
+  }
+
   network_interface {
-  network = "default"
+  network = google_compute_network.default.name
 
   access_config {}
   }
@@ -24,14 +53,4 @@ resource "google_compute_instance" "vm_instance" {
   metadata = {
     ssh-keys = "${var.account_name}:${file("/installer/gcp_install/id_rsa.pub")}"
   }
-}
-
-resource "google_compute_firewall" "default" {
- name    = "carrier-firewall"
- network = "default"
-
- allow {
-   protocol = "tcp"
-   ports    = ["80", "443", "8080", "8086", "3100", "4444", "9999"]
- }
 }

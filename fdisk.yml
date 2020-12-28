@@ -1,0 +1,10 @@
+---
+- hosts: myhost
+  become: yes
+  vars_files:
+  - vars/default.yml
+  tasks:
+    - name: fdisk
+      shell: (echo n; echo p; echo  ; echo ; echo ; echo w) | fdisk /dev/sdb && mkfs.ext4 /dev/sdb1 && \
+              echo "/dev/sdb1 {{ CARRIER_PATH }} ext4 defaults 0 0" >> /etc/fstab && \
+              mount -a

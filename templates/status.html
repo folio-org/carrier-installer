@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
   <head>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta HTTP-EQUIV="Pragma" CONTENT="no-cache">
+    <meta HTTP-EQUIV="Expires" CONTENT="-1">
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=4, shrink-to-fit=no">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
@@ -8,7 +11,7 @@
     <link type="text/css" href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
     <title>Carrier status installer</title>
   </head>
-  <body onload="setInterval(readFile, 1000)">
+  <body>
     <div class="midscreen w-50 float-left ml-5">
       <div class="form-group">
         <label for="stat">Status</label>
@@ -18,11 +21,14 @@
         <p></p>
         <script>
         var i = 0
+        $( document ).ready(function() {
+            setInterval(readFile, 1000);
+        });
         function readFile() {
-          jQuery.get("/static/status?n=" + i, function(txt) {
+          jQuery.get("/static/status?n=" + (new Date(Date.now()-(new Date()).getTimezoneOffset() * 60000)).toISOString().slice(0, 19).replace(/[^0-9]/g, ""), function(txt) {
             $('#stat').text(txt);
           });
-          jQuery.get("/static/status?n=" + i, function(data){
+          jQuery.get("/static/status?n=" + (new Date(Date.now()-(new Date()).getTimezoneOffset() * 60000)).toISOString().slice(0, 19).replace(/[^0-9]/g, ""), function(data){
             var now = (data.split('\n').length);
             $('.progress-bar').each(function() {
               var min = $(this).attr('aria-valuemin');

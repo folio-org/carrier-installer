@@ -4,6 +4,18 @@ provider "aws" {
   region     = "${var.region}"
 }
 
+resource "aws_volume_attachment" "ebs_att" {
+  device_name = "/dev/sdh"
+  volume_id   = aws_ebs_volume.carrier_ebs.id
+  instance_id = aws_instance.carrier.id
+  skip_destroy = true
+}
+
+resource "aws_ebs_volume" "carrier_ebs" {
+  availability_zone = "${var.region}a"
+  size              = "${var.disk_size}"
+}
+
 resource "aws_security_group" "Carrier_security_group" {
   name         = "Carrier security group"
   description  = "Carrier security group"

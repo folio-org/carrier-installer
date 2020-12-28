@@ -68,9 +68,7 @@
       when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
 
     - name: Copy Files
-      copy:
-        src: /installer/carrier
-        dest: "{{ CARRIER_PATH }}"
+      shell: git clone https://github.com/carrier-io/installer.git && mv ./installer/carrier "{{ CARRIER_PATH }}/carrier" && rm -rf ./installer
 
     - name: Replace app host
       replace:

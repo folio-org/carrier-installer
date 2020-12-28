@@ -7,27 +7,22 @@
     <link type="text/css" href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
     <title>Carrier AWS installer</title>
   </head>
-
   <body>
     <div class="container midscreen w-50 float-left ml-5">
       <form method="post" enctype="multipart/form-data">
-
         <small class="form-text text-muted"> You can create your key here: https://console.aws.amazon.com/iam/home?region=us-east-1#/security_credentials</small>
         <div class="form-group">
           <label for="keypair">AWS key pairs</label>
           <input type="file" class="form-control-file" name="file" id="keypair">
         </div>
-
         <div class="form-group">
           <label for="keyid">AWS Access Key Id</label>
           <input type="text" class="form-control" name="accesskey" id="keyid" placeholder="Enter your account name" required>
         </div>
-
         <div class="form-group">
           <label for="secret">AWS Secret Key</label>
           <input type="text" class="form-control" name="secretkey" id="secret" placeholder="Enter your account name" required>
         </div>
-
       <div class="vmtype">
         <label> Select Region: </label>
         <select class="custom-select" name="region">
@@ -53,12 +48,19 @@
         <div class="vmtype">
         <label> Select Virtual Machine type: </label>
         <select class="custom-select" name="vmtype">
-          <option value="t2.micro"> Test [1 CPU 1 RAM] </option>
-          <option value="t2.xlarge" selected> Low [4 CPU 16 RAM] (Recommended) </option>
-          <option value="t2.2xlarge"> Medium [8 CPU 32 RAM] </option>
+          <option disabled value="t2.xlarge"> Low [4 CPU 16 RAM] </option>
+          <option value="t2.2xlarge" selected> Medium [8 CPU 32 RAM] (Recommended) </option>
         </select>
         </div>
-
+        <p></p>
+        <div class="form-group">
+        <label> Select Virtual Machine Disk Size: </label>
+        <select class="custom-select" name="disksize">
+          <option value="100" disabled> Low 100 GB </option>
+          <option value="256" selected> Medium 256 GB (Recommended) </option>
+          <option value="512"> High 512 GB </option>
+        </select>
+        </div>
         <p></p>
         <div class="ostype">
         <label> Select Operating System: </label>
@@ -67,7 +69,6 @@
           <option disabled value="rhel8"> Red Hat Enterprise Linux 8 </option>
         </select>
         </div>
-
         <p></p>
         <div class="form-group">
           <label for="carrier_path">Carrier Path</label>
@@ -87,10 +88,8 @@
         </div>
         <p></p>
         <button type="submit" class="btn btn-primary" value="Upload">Install</button>
-
       </form>
     </div>
-
     <script src="{{ url_for('static', filename='js/jquery.slim.min.js') }}"></script>
     <script src="{{ url_for('static', filename='js/popper.min.js') }}"></script>
     <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>

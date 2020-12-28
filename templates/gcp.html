@@ -50,8 +50,17 @@
         <div class="form-group">
         <label> Select Virtual Machine type: </label>
         <select class="custom-select" name="vmtype">
-          <option value="n1-standard-4" selected> Low [4 CPU 15 RAM] (Recommended) </option>
-          <option value="n1-standard-8"> Medium [8 CPU 30 RAM] </option>
+          <option value="n1-standard-4" disabled> Low [4 CPU 15 RAM]  </option>
+          <option value="n1-standard-8" selected> Medium [8 CPU 30 RAM] (Recommended) </option>
+          <option value="n1-standard-16"> High [16 CPU	60 RAM] </option>
+        </select>
+        </div>
+        <div class="form-group">
+        <label> Select Virtual Machine Disk Size: </label>
+        <select class="custom-select" name="disksize">
+          <option value="100" disabled> Low 100 GB </option>
+          <option value="256" selected> Medium 256 GB (Recommended) </option>
+          <option value="512"> High 512 GB </option>
         </select>
         </div>
         <div class="form-group">

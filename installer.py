@@ -12,19 +12,20 @@ def home():
 def aws():
     if request.method == 'POST':
         args = request.form
-        awsfile = args['file']
+        awsfile = request.files['file']
         ostype = args['ostype']
         vmtype = args['vmtype']
         awsacc = args['accesskey']
         awssec = args['secretkey']
         awsregion = args['region']
+        disk_size = args['disksize']
         carrier_path = args.get("carrier_path") if args.get("carrier_path") != "" else "/opt"
         redis_pass = args.get("redis_pass") if args.get("redis_pass") != "" else "password"
         influx_pass = args.get("influx_pass") if args.get("influx_pass") != "" else "password"
         influx_user = args.get("influx_user") if args.get("influx_user") != "" else "admin"
         awsfile.save(os.path.join('/installer/aws_install', awsfile.filename))
         os.system('sed -i "s#76#120#g" /installer/templates/status.html')
-        os.system(f"bash /installer/aws_install/install.sh {vmtype} {ostype} {awsacc} {awssec} {awsregion} {carrier_path} {redis_pass} {influx_pass} {influx_user} &")
+        os.system(f"bash /installer/aws_install/install.sh {vmtype} {ostype} {awsacc} {awssec} {awsregion} {carrier_path} {redis_pass} {influx_pass} {influx_user} {disk_size} &")
         return redirect(url_for('status'))
     else:
         return render_template('aws.html')
@@ -33,10 +34,11 @@ def aws():
 def gcp():
     if request.method == 'POST':
         args = request.form
-        gcpfile = args['file']
+        gcpfile = request.files['file']
         ostype = args['ostype']
         region = args['region']
         vmtype = args['vmtype']
+        disk_size = args['disksize']
         carrier_path = args.get("carrier_path") if args.get("carrier_path") != "" else "/opt"
         redis_pass = args.get("redis_pass") if args.get("redis_pass") != "" else "password"
         influx_pass = args.get("influx_pass") if args.get("influx_pass") != "" else "password"
@@ -44,7 +46,7 @@ def gcp():
         gcpaccname = request.form['gcpaccname']
         gcpfile.save(os.path.join('/installer/gcp_install', "credentials.json"))
         os.system('sed -i "s#76#120#g" /installer/templates/status.html')
-        os.system(f"bash /installer/gcp_install/install.sh {vmtype} {ostype} {gcpaccname} {region} {carrier_path} {redis_pass} {influx_pass} {influx_user} &")
+        os.system(f"bash /installer/gcp_install/install.sh {vmtype} {ostype} {gcpaccname} {region} {carrier_path} {redis_pass} {influx_pass} {influx_user} {disk_size} &")
         return redirect(url_for('status'))
     else:
         return render_template('gcp.html')
@@ -115,6 +117,10 @@ def localdef():
 def status():
     return render_template('status.html')
 
+@installer.route('/terraformdestroy')
+def terraformdestroy():
+    os.system("bash ./destroyinfra.sh &")
+    return redirect(url_for('status'))
 
 if __name__ == "__main__":
     installer.run(host="0.0.0.0", port="1337", debug=True)
