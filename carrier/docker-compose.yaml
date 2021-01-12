@@ -145,6 +145,7 @@ services:
       - VAULT_URL=$VAULT_URL
       - INFLUX_PASSWORD=$INFLUX_PASSWORD
       - INFLUX_USER=$INFLUX_USERNAME
+      - GF_API_KEY=$GF_API_KEY
     labels:
       - 'traefik.enable=true'
       - 'traefik.http.routers.galloper.rule=PathPrefix(`/`)'

@@ -103,7 +103,17 @@
       shell: docker restart carrier-vault && sleep 30 && docker restart carrier-galloper
 
     - name: bootstrap
-      shell: bash "{{ CARRIER_PATH }}/carrier/bootstrap.sh"
+      shell: bash "{{ CARRIER_PATH }}/carrier/bootstrap.sh" http {{ APP_HOST }} {{ CARRIER_PATH }}
+
+    - name: Restart services
+      shell: cd "{{ CARRIER_PATH }}/carrier" && docker-compose up -d
+      when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+      register: output
+
+    - name: Restart services
+      shell: cd "{{ CARRIER_PATH }}/carrier" && /usr/local/bin/docker-compose up -d
+      when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+      register: output
 
     - debug:
         var: output
