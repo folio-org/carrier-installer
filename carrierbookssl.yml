@@ -68,51 +68,63 @@
       when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
 
     - name: Copy Files
-      shell: git clone https://github.com/carrier-io/installer.git && mv ./installer/carrier "{{ CARRIER_PATH }}/carrier" && rm -rf ./installer
+      shell: git clone https://github.com/carrier-io/installer.git && mv ./installer/carrier-ssl "{{ CARRIER_PATH }}/carrier-ssl" && rm -rf ./installer
 
     - name: Replace app host
       replace:
-        path: "{{ CARRIER_PATH }}/carrier/.env"
+        path: "{{ CARRIER_PATH }}/carrier-ssl/.env"
         regexp: 'http://localhost'
-        replace: "http://{{ APP_HOST }}"
+        replace: "https://{{ APP_HOST }}"
+
+    - name: Replace app domain
+      replace:
+          path: "{{ CARRIER_PATH }}/carrier-ssl/.env"
+          regexp: "APP_DOMAIN=localhost"
+          replace: "APP_DOMAIN={{ APP_HOST }}"
 
     - name: Replace install path
       replace:
-        path: "{{ CARRIER_PATH }}/carrier/.env"
+        path: "{{ CARRIER_PATH }}/carrier-ssl/.env"
         regexp: '/opt/carrier'
-        replace: "{{ CARRIER_PATH }}/carrier"
+        replace: "{{ CARRIER_PATH }}/carrier-ssl"
 
     - name: Replace redis password
       replace:
-        path: "{{ CARRIER_PATH }}/carrier/.env"
+        path: "{{ CARRIER_PATH }}/carrier-ssl/.env"
         regexp: 'REDIS_PASSWORD=password'
         replace: "REDIS_PASSWORD={{ REDIS_PASSWORD }}"
 
     - name: Replace rabbit password
       replace:
-        path: "{{ CARRIER_PATH }}/carrier/.env"
+        path: "{{ CARRIER_PATH }}/carrier-ssl/.env"
         regexp: 'RABBIT_PASSWORD=password'
         replace: "RABBIT_PASSWORD={{ RABBIT_PASSWORD }}"
 
     - name: Replace influx password
       replace:
-        path: "{{ CARRIER_PATH }}/carrier/.env"
+        path: "{{ CARRIER_PATH }}/carrier-ssl/.env"
         regexp: 'INFLUX_PASSWORD=password'
         replace: "INFLUX_PASSWORD={{ INFLUX_PASSWORD }}"
 
     - name: Replace influx username
       replace:
-        path: "{{ CARRIER_PATH }}/carrier/.env"
+        path: "{{ CARRIER_PATH }}/carrier-ssl/.env"
         regexp: 'INFLUX_USERNAME=admin'
         replace: "INFLUX_USERNAME={{ INFLUX_USERNAME }}"
 
+    - name: Replace mail for ssl
+      replace:
+        path: "{{ CARRIER_PATH }}/carrier-ssl/traefik/traefik.toml"
+        regexp: 'email = "admin@example.com"'
+        replace: 'email = "{{ SSL_MAIL }}"'
+
     - name: Create and start services
-      shell: cd "{{ CARRIER_PATH }}/carrier" && docker-compose up -d
+      shell: cd "{{ CARRIER_PATH }}/carrier-ssl" && docker-compose up -d
       when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
       register: output
 
     - name: Create and start services
-      shell: cd "{{ CARRIER_PATH }}/carrier" && /usr/local/bin/docker-compose up -d
+      shell: cd "{{ CARRIER_PATH }}/carrier-ssl" && /usr/local/bin/docker-compose up -d
       when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
       register: output
 
@@ -121,13 +133,13 @@
 
     - name: Replace influx password
       replace:
-        path: "{{ CARRIER_PATH }}/carrier/bootstrap.sh"
+        path: "{{ CARRIER_PATH }}/carrier-ssl/bootstrap.sh"
         regexp: 'INFLUXPASSWORD'
         replace: "{{ INFLUX_PASSWORD }}"
 
     - name: Bootstrap influx username
       replace:
-        path: "{{ CARRIER_PATH }}/carrier/bootstrap.sh"
+        path: "{{ CARRIER_PATH }}/carrier-ssl/bootstrap.sh"
         regexp: 'INFLUXUSERNAME'
         replace: "{{ INFLUX_USERNAME }}"
 
@@ -135,15 +147,15 @@
       shell: docker restart carrier-vault && sleep 30 && docker restart carrier-galloper
 
     - name: bootstrap
-      shell: bash "{{ CARRIER_PATH }}/carrier/bootstrap.sh" http {{ APP_HOST }} {{ CARRIER_PATH }}
+      shell: bash "{{ CARRIER_PATH }}/carrier-ssl/bootstrap.sh" https {{ APP_HOST }} {{ CARRIER_PATH }}
 
     - name: Restart services
-      shell: cd "{{ CARRIER_PATH }}/carrier" && docker-compose up -d
+      shell: cd "{{ CARRIER_PATH }}/carrier-ssl" && docker-compose up -d
       when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
       register: output
 
     - name: Restart services
-      shell: cd "{{ CARRIER_PATH }}/carrier" && /usr/local/bin/docker-compose up -d
+      shell: cd "{{ CARRIER_PATH }}/carrier-ssl" && /usr/local/bin/docker-compose up -d
       when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
       register: output
 

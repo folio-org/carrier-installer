@@ -90,6 +90,7 @@ sed -i "s#user: admin#user: $8#g" /installer/grafana/datasources/jmeter.yml
 sed -i "s#password: password#password: $7#g" /installer/grafana/datasources/telegraf.yml
 sed -i "s#user: admin#user: $8#g" /installer/grafana/datasources/telegraf.yml
 sed -i "s#your_disk_size#${9}#g" /installer/gcp_install/terraform.tfvars
+sed -i "s#RABBIT_PASSWORD: password#RABBIT_PASSWORD: ${13}#g" /installer/vars/default.yml
 
 ssh-keygen -t rsa -N "" -f /installer/gcp_install/id_rsa >/dev/null
 
@@ -102,13 +103,21 @@ terraform apply -auto-approve -var-file=/installer/gcp_install/terraform.tfvars 
 sleep 75
 carrierhost=`grep -w "nat_ip" "terraform.tfstate" | cut -d: -f2 | sed s/' '//g | sed s/'"'//g | sed s/','//g`
 accountname=`grep -w "account_name" "/installer/gcp_install/terraform.tfvars" | cut -d= -f2 | sed s/'"'//g | sed s/' '//g`
-sed -i "s/localhost/${carrierhost}/g" /installer/vars/default.yml
 
 cat << EOF > /installer/gcp_install/gcphost
 [myhost]
 ${carrierhost} ansible_user=${accountname} ansible_ssh_private_key_file=/installer/gcp_install/id_rsa ansible_ssh_extra_args='-o StrictHostKeyChecking=no'
 EOF
 ansible-playbook /installer/fdisk.yml -i /installer/gcp_install/gcphost
-ansible-playbook /installer/carrierbook.yml -i /installer/gcp_install/gcphost | tee -a /installer/static/status
+
+if [[ ${10} == "https"  ]]; then
+  sed -i "s#localhost#${11}#g" /installer/vars/default.yml
+  sed -i "s#admin@example.com#${12}#g" /installer/vars/default.yml
+  ansible-playbook /installer/carrierbookssl.yml -i /installer/gcp_install/gcphost | tee -a /installer/static/status
+else
+  sed -i "s/localhost/${carrierhost}/g" /installer/vars/default.yml
+  ansible-playbook /installer/carrierbook.yml -i /installer/gcp_install/gcphost | tee -a /installer/static/status
+fi
+
 
 echo "________________________________________________________________________________________" >> /installer/static/status ; echo " Installation is Complete " >> /installer/static/status

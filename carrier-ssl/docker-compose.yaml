@@ -133,6 +133,7 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     environment:
+      - RABBIT_HOST=arbiter-rabbit
       - REDIS_HOST=carrier-redis
       - POSTGRES_HOST=carrier-postgres
       - REDIS_DB=$FAAS_REDIS_DB
@@ -152,6 +153,8 @@ services:
       - INFLUX_PASSWORD=$INFLUX_PASSWORD
       - INFLUX_USER=$INFLUX_USERNAME
       - GF_API_KEY=$GF_API_KEY
+      - RABBIT_PASSWORD=$RABBIT_PASSWORD
+      - RABBIT_USER=$RABBIT_USER
     labels:
       - 'traefik.enable=true'
       - 'traefik.http.routers.galloper.rule=Host(`$APP_DOMAIN`) && PathPrefix(`/`)'
@@ -274,6 +277,24 @@ services:
       - $REDIS_PASSWORD
     labels:
       - 'traefik.enable=false'
+  rabbitmq:
+    image: rabbitmq:3-management
+    logging:
+      driver: "json-file"
+      options:
+        max-file: "5"
+        max-size: "10m"
+    restart: unless-stopped
+    ports:
+      - 5672:5672
+      - 15672:15672
+    container_name: arbiter-rabbit
+    environment:
+      - RABBITMQ_DEFAULT_USER=$RABBIT_USER
+      - RABBITMQ_DEFAULT_PASS=$RABBIT_PASSWORD
+      - RABBITMQ_DEFAULT_VHOST=carrier
+    labels:
+      - 'traefik.enable=false'
   interceptor:
     image: getcarrier/interceptor:latest
     logging:
@@ -282,15 +303,17 @@ services:
         max-file: "5"
         max-size: "10m"
     depends_on:
-      - redis
+      - rabbitmq
     restart: unless-stopped
     container_name: carrier-interceptor
     environment:
       - RAM_QUOTA=$RAM_QUOTA
       - CPU_QUOTA=$CPU_QUOTA
       - CPU_CORES=$INTERPECTOR_TASKS
-      - REDIS_HOST=carrier-redis
-      - REDIS_PASSWORD=$REDIS_PASSWORD
+      - RABBIT_HOST=arbiter-rabbit
+      - RABBIT_PASSWORD=$RABBIT_PASSWORD
+      - RABBIT_USER=$RABBIT_USER
+      - LOKI_HOST=$APP_HOST
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
   jenkins:

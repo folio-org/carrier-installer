@@ -15,6 +15,7 @@ elif [[ $1 == "http" ]]; then
   sed -i "s#user: admin#user: $6#g" /installer/grafana/datasources/jmeter.yml
   sed -i "s#password: password#password: $5#g" /installer/grafana/datasources/telegraf.yml
   sed -i "s#user: admin#user: $6#g" /installer/grafana/datasources/telegraf.yml
+  sed -i "s#RABBIT_PASSWORD: password#RABBIT_PASSWORD: $8#g" /installer/vars/default.yml
   ansible-playbook /installer/local_install/local.yml | tee /installer/static/status
 else
   sed -i "s#localhost#$2#g" /installer/vars/default.yml
@@ -29,6 +30,7 @@ else
   sed -i "s#password: password#password: $5#g" /installer/grafana/datasources/telegraf.yml
   sed -i "s#user: admin#user: $6#g" /installer/grafana/datasources/telegraf.yml
   sed -i "s#admin@example.com#$7#g" /installer/carrier-ssl/traefik/traefik.toml
+  sed -i "s#RABBIT_PASSWORD: password#RABBIT_PASSWORD: $8#g" /installer/vars/default.yml
   ansible-playbook /installer/local_install/localssl.yml | tee /installer/static/status
 fi
 
