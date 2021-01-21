@@ -18,6 +18,7 @@ sed -i "s#user: admin#user: $9#g" /installer/grafana/datasources/jmeter.yml
 sed -i "s#password: password#password: $8#g" /installer/grafana/datasources/telegraf.yml
 sed -i "s#user: admin#user: $9#g" /installer/grafana/datasources/telegraf.yml
 sed -i "s#your_disk_size#${10}#g" /installer/aws_install/terraform.tfvars
+sed -i "s#RABBIT_PASSWORD: password#RABBIT_PASSWORD: ${14}#g" /installer/vars/default.yml
 
 
 if [[ $2 == "ubu1804" ]]; then
@@ -130,8 +131,6 @@ sleep 75
 
 carrierhost=`grep -w "public_ip" "terraform.tfstate" | cut -d: -f2 | sed s/' '//g | sed s/'"'//g | sed s/','//g`
 
-sed -i "s/localhost/${carrierhost}/g" /installer/vars/default.yml
-
 cat << EOF > /installer/aws_install/awshost
 [myhost]
 ${carrierhost} ansible_user=${accountname} ansible_port=22 ansible_ssh_private_key_file=/installer/aws_install/${keypairsname}.pem ansible_ssh_extra_args='-o StrictHostKeyChecking=no'
@@ -141,6 +140,14 @@ chmod 400 /installer/aws_install/${keypairsname}.pem
 
 sed -i "s#/dev/sdb#/dev/xvdh#g" /installer/fdisk.yml
 ansible-playbook /installer/fdisk.yml -i /installer/aws_install/awshost
-ansible-playbook /installer/carrierbook.yml -i /installer/aws_install/awshost | tee -a /installer/static/status
+if [[ ${11} == "https"  ]]; then
+  sed -i "s#localhost#${12}#g" /installer/vars/default.yml
+  sed -i "s#admin@example.com#${13}#g" /installer/vars/default.yml
+  ansible-playbook /installer/carrierbookssl.yml -i /installer/aws_install/awshost | tee -a /installer/static/status
+else
+  sed -i "s/localhost/${carrierhost}/g" /installer/vars/default.yml
+  ansible-playbook /installer/carrierbook.yml -i /installer/aws_install/awshost | tee -a /installer/static/status
+fi
+
 
 echo "________________________________________________________________________________________" >> /installer/static/status ; echo " Installation is Complete " >> /installer/static/status

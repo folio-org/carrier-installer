@@ -31,6 +31,7 @@ sed -i "s#password: password#password: $6#g" /installer/grafana/datasources/jmet
 sed -i "s#user: admin#user: $7#g" /installer/grafana/datasources/jmeter.yml
 sed -i "s#password: password#password: $6#g" /installer/grafana/datasources/telegraf.yml
 sed -i "s#user: admin#user: $7#g" /installer/grafana/datasources/telegraf.yml
+sed -i "s#RABBIT_PASSWORD: password#RABBIT_PASSWORD: ${11}#g" /installer/vars/default.yml
 
 terraform init /installer/azure_install
 terraform apply -auto-approve /installer/azure_install
@@ -44,4 +45,13 @@ cat << EOF > /installer/azure_install/azhost
 ${carrierhost} ansible_user=Carrier ansible_ssh_private_key_file=/installer/azure_install/id_rsa ansible_ssh_extra_args='-o StrictHostKeyChecking=no'
 EOF
 
-ansible-playbook /installer/carrierbook.yml -i /installer/azure_install/azhost
+if [[ $8 == "https"  ]]; then
+  sed -i "s#localhost#$9#g" /installer/vars/default.yml
+  sed -i "s#admin@example.com#${10}#g" /installer/vars/default.yml
+  ansible-playbook /installer/carrierbook.yml -i /installer/azure_install/azhost | tee -a /installer/static/status
+else
+  sed -i "s/localhost/${carrierhost}/g" /installer/vars/default.yml
+  ansible-playbook /installer/carrierbookssl.yml -i /installer/azure_install/azhost | tee -a /installer/static/status
+fi
+
+echo "________________________________________________________________________________________" >> /installer/static/status ; echo " Installation is Complete " >> /installer/static/status

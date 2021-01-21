@@ -19,16 +19,21 @@ def aws():
         awssec = args['secretkey']
         awsregion = args['region']
         disk_size = args['disksize']
+        ssl = args['ssl']
+        domainname = args['domainname']
+        sslmail = args['sslmail']
+        rabbit_pass = args.get("rabbit_pass") if args.get("rabbit_pass") != "" else "password"
         carrier_path = args.get("carrier_path") if args.get("carrier_path") != "" else "/opt"
         redis_pass = args.get("redis_pass") if args.get("redis_pass") != "" else "password"
         influx_pass = args.get("influx_pass") if args.get("influx_pass") != "" else "password"
         influx_user = args.get("influx_user") if args.get("influx_user") != "" else "admin"
         awsfile.save(os.path.join('/installer/aws_install', awsfile.filename))
         os.system('sed -i "s#76#120#g" /installer/templates/status.html')
-        os.system(f"bash /installer/aws_install/install.sh {vmtype} {ostype} {awsacc} {awssec} {awsregion} {carrier_path} {redis_pass} {influx_pass} {influx_user} {disk_size} &")
+        os.system(f"bash /installer/aws_install/install.sh {vmtype} {ostype} {awsacc} {awssec} {awsregion} {carrier_path} {redis_pass} {influx_pass} {influx_user} {disk_size} {ssl} {domainname} {sslmail} {rabbit_pass} &")
         return redirect(url_for('status'))
     else:
         return render_template('aws.html')
+
 
 @installer.route('/gcp', methods=['GET', 'POST'])
 def gcp():
@@ -39,6 +44,10 @@ def gcp():
         region = args['region']
         vmtype = args['vmtype']
         disk_size = args['disksize']
+        ssl = args['ssl']
+        domainname = args['domainname']
+        sslmail = args['sslmail']
+        rabbit_pass = args.get("rabbit_pass") if args.get("rabbit_pass") != "" else "password"
         carrier_path = args.get("carrier_path") if args.get("carrier_path") != "" else "/opt"
         redis_pass = args.get("redis_pass") if args.get("redis_pass") != "" else "password"
         influx_pass = args.get("influx_pass") if args.get("influx_pass") != "" else "password"
@@ -46,11 +55,10 @@ def gcp():
         gcpaccname = request.form['gcpaccname']
         gcpfile.save(os.path.join('/installer/gcp_install', "credentials.json"))
         os.system('sed -i "s#76#120#g" /installer/templates/status.html')
-        os.system(f"bash /installer/gcp_install/install.sh {vmtype} {ostype} {gcpaccname} {region} {carrier_path} {redis_pass} {influx_pass} {influx_user} {disk_size} &")
+        os.system(f"bash /installer/gcp_install/install.sh {vmtype} {ostype} {gcpaccname} {region} {carrier_path} {redis_pass} {influx_pass} {influx_user} {disk_size} {ssl} {domainname} {sslmail} {rabbit_pass} &")
         return redirect(url_for('status'))
     else:
         return render_template('gcp.html')
-
 
 @installer.route('/azure', methods=['GET', 'POST'])
 def azure():
@@ -59,13 +67,17 @@ def azure():
         location = args['region']
         vmtype = args['vmtype']
         ostype = args['ostype']
+        ssl = args['ssl']
+        domainname = args['domainname']
+        sslmail = args['sslmail']
+        rabbit_pass = args.get("rabbit_pass") if args.get("rabbit_pass") != "" else "password"
         carrier_path = args.get("carrier_path") if args.get("carrier_path") != "" else "/opt"
         redis_pass = args.get("redis_pass") if args.get("redis_pass") != "" else "password"
         influx_pass = args.get("influx_pass") if args.get("influx_pass") != "" else "password"
         influx_user = args.get("influx_user") if args.get("influx_user") != "" else "admin"
         os.system("ssh-keygen -b 4096 -t rsa -f /installer/azure_install/id_rsa -q -N ''")
         os.system('sed -i "s#76#120#g" /installer/templates/status.html')
-        os.system(f"bash /installer/azure_install/install.sh {location} {vmtype} {ostype} {carrier_path} {redis_pass} {influx_pass} {influx_user} &")
+        os.system(f"bash /installer/azure_install/install.sh {location} {vmtype} {ostype} {carrier_path} {redis_pass} {influx_pass} {influx_user} {ssl} {domainname} {sslmail} {rabbit_pass} &")
         return send_file("/installer/azure_install/id_rsa", as_attachment=True)
     else:
         os.system('nohup az login & sleep 2 && sed -i "s#MYCODE#`cat nohup.out`#g" /installer/templates/azure.html')
@@ -79,12 +91,16 @@ def ssh():
         sshipaddr = args['ipaddr']
         sshuser = args['username']
         sshrsa = args['file']
+        ssl = args['ssl']
+        domainname = args['domainname']
+        sslmail = args['sslmail']
+        rabbit_pass = args.get("rabbit_pass") if args.get("rabbit_pass") != "" else "password"
         carrier_path = args.get("carrier_path") if args.get("carrier_path") != "" else "/opt"
         redis_pass = args.get("redis_pass") if args.get("redis_pass") != "" else "password"
         influx_pass = args.get("influx_pass") if args.get("influx_pass") != "" else "password"
         influx_user = args.get("influx_user") if args.get("influx_user") != "" else "admin"
         sshrsa.save(os.path.join('/installer/ssh_install', "id_rsa"))
-        os.system(f"bash /installer/ssh_install/install.sh {sshipaddr} {sshuser} {carrier_path} {redis_pass} {influx_pass} {influx_user} &")
+        os.system(f"bash /installer/ssh_install/install.sh {sshipaddr} {sshuser} {carrier_path} {redis_pass} {influx_pass} {influx_user} {ssl} {domainname} {sslmail} {rabbit_pass} &")
         return redirect(url_for('status'))
     else:
         return render_template('ssh.html')
@@ -101,7 +117,8 @@ def self():
         influx_pass = args.get("influx_pass") if args.get("influx_pass") != "" else "password"
         influx_user = args.get("influx_user") if args.get("influx_user") != "" else "admin"
         sslmail = args['sslmail']
-        os.system(f"bash local_install/install.sh {ssl} {ipordns} {carrier_path} {redis_pass} {influx_pass} {influx_user} {sslmail} &")
+        rabbit_pass = args.get("rabbit_pass") if args.get("rabbit_pass") != "" else "password"
+        os.system(f"bash local_install/install.sh {ssl} {ipordns} {carrier_path} {redis_pass} {influx_pass} {influx_user} {sslmail} {rabbit_pass} &")
         return redirect(url_for('status'))
     else:
         return render_template('local.html')

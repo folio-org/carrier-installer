@@ -56,6 +56,12 @@
         regexp: 'REDIS_PASSWORD=password'
         replace: "REDIS_PASSWORD={{ REDIS_PASSWORD }}"
 
+    - name: Replace rabbit password
+      replace:
+        path: "{{ CARRIER_PATH }}/carrier/.env"
+        regexp: 'RABBIT_PASSWORD=password'
+        replace: "RABBIT_PASSWORD={{ RABBIT_PASSWORD }}"
+
     - name: Replace influx password
       replace:
         path: "{{ CARRIER_PATH }}/carrier/.env"
