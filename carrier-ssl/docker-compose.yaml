@@ -155,6 +155,7 @@ services:
       - GF_API_KEY=$GF_API_KEY
       - RABBIT_PASSWORD=$RABBIT_PASSWORD
       - RABBIT_USER=$RABBIT_USER
+      - RABBIT_QUEUE_NAME=$RABBIT_QUEUE_NAME
     labels:
       - 'traefik.enable=true'
       - 'traefik.http.routers.galloper.rule=Host(`$APP_DOMAIN`) && PathPrefix(`/`)'

@@ -21,7 +21,7 @@ def aws():
         disk_size = args['disksize']
         ssl = args['ssl']
         domainname = args['domainname']
-        sslmail = args['sslmail']
+        sslmail = args.get("sslmail") if args.get("sslmail") != "" else "dev"
         rabbit_pass = args.get("rabbit_pass") if args.get("rabbit_pass") != "" else "password"
         carrier_path = args.get("carrier_path") if args.get("carrier_path") != "" else "/opt"
         redis_pass = args.get("redis_pass") if args.get("redis_pass") != "" else "password"
@@ -46,7 +46,7 @@ def gcp():
         disk_size = args['disksize']
         ssl = args['ssl']
         domainname = args['domainname']
-        sslmail = args['sslmail']
+        sslmail = args.get("sslmail") if args.get("sslmail") != "" else "dev"
         rabbit_pass = args.get("rabbit_pass") if args.get("rabbit_pass") != "" else "password"
         carrier_path = args.get("carrier_path") if args.get("carrier_path") != "" else "/opt"
         redis_pass = args.get("redis_pass") if args.get("redis_pass") != "" else "password"
@@ -69,7 +69,7 @@ def azure():
         ostype = args['ostype']
         ssl = args['ssl']
         domainname = args['domainname']
-        sslmail = args['sslmail']
+        sslmail = args.get("sslmail") if args.get("sslmail") != "" else "dev"
         rabbit_pass = args.get("rabbit_pass") if args.get("rabbit_pass") != "" else "password"
         carrier_path = args.get("carrier_path") if args.get("carrier_path") != "" else "/opt"
         redis_pass = args.get("redis_pass") if args.get("redis_pass") != "" else "password"
@@ -93,7 +93,7 @@ def ssh():
         sshrsa = args['file']
         ssl = args['ssl']
         domainname = args['domainname']
-        sslmail = args['sslmail']
+        sslmail = args.get("sslmail") if args.get("sslmail") != "" else "dev"
         rabbit_pass = args.get("rabbit_pass") if args.get("rabbit_pass") != "" else "password"
         carrier_path = args.get("carrier_path") if args.get("carrier_path") != "" else "/opt"
         redis_pass = args.get("redis_pass") if args.get("redis_pass") != "" else "password"
@@ -116,7 +116,7 @@ def self():
         redis_pass = args.get("redis_pass") if args.get("redis_pass") != "" else "password"
         influx_pass = args.get("influx_pass") if args.get("influx_pass") != "" else "password"
         influx_user = args.get("influx_user") if args.get("influx_user") != "" else "admin"
-        sslmail = args['sslmail']
+        sslmail = args.get("sslmail") if args.get("sslmail") != "" else "dev"
         rabbit_pass = args.get("rabbit_pass") if args.get("rabbit_pass") != "" else "password"
         os.system(f"bash local_install/install.sh {ssl} {ipordns} {carrier_path} {redis_pass} {influx_pass} {influx_user} {sslmail} {rabbit_pass} &")
         return redirect(url_for('status'))
