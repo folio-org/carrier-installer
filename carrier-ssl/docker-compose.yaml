@@ -133,7 +133,7 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     environment:
-      - RABBIT_HOST=arbiter-rabbit
+      - RABBIT_HOST=carrier-rabbit
       - REDIS_HOST=carrier-redis
       - POSTGRES_HOST=carrier-postgres
       - REDIS_DB=$FAAS_REDIS_DB
@@ -289,7 +289,7 @@ services:
     ports:
       - 5672:5672
       - 15672:15672
-    container_name: arbiter-rabbit
+    container_name: carrier-rabbit
     environment:
       - RABBITMQ_DEFAULT_USER=$RABBIT_USER
       - RABBITMQ_DEFAULT_PASS=$RABBIT_PASSWORD
@@ -311,7 +311,7 @@ services:
       - RAM_QUOTA=$RAM_QUOTA
       - CPU_QUOTA=$CPU_QUOTA
       - CPU_CORES=$INTERPECTOR_TASKS
-      - RABBIT_HOST=arbiter-rabbit
+      - RABBIT_HOST=carrier-rabbit
       - RABBIT_PASSWORD=$RABBIT_PASSWORD
       - RABBIT_USER=$RABBIT_USER
       - LOKI_HOST=$APP_HOST
