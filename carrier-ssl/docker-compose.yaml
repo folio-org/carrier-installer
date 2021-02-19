@@ -182,11 +182,9 @@ services:
       - INFLUXDB_DATA_MAX_SERIES_PER_DATABASE=$INFLUXDB_DATA_MAX_SERIES_PER_DATABASE
     volumes:
       - $CARRIER_PATH/influx:/var/lib/influxdb
-      - $CARRIER_PATH/influx_config/influxdb.conf:/etc/influxdb/influxdb.conf:ro
     ports:
       - 2003:2003
       - 8086:8086
-    command: -config /etc/influxdb/influxdb.conf
     labels:
       - 'traefik.enable=false'
     container_name: carrier-influx
