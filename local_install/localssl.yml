@@ -105,6 +105,24 @@
         regexp: 'INFLUXUSERNAME'
         replace: "{{ INFLUX_USERNAME }}"
 
+    - name: Replace influx host in telegraf config
+      replace:
+        path: "{{ CARRIER_PATH }}/carrier/telegraf/telegraf.conf"
+        regexp: 'INFLUX_HOST'
+        replace: "http://{{ APP_HOST }}:8086"
+
+    - name: Replace influx username in telegraf config
+      replace:
+        path: "{{ CARRIER_PATH }}/carrier/telegraf/telegraf.conf"
+        regexp: 'INFLUX_USER'
+        replace: "{{ INFLUX_USERNAME }}"
+
+    - name: Replace influx password in telegraf config
+      replace:
+        path: "{{ CARRIER_PATH }}/carrier/telegraf/telegraf.conf"
+        regexp: 'INFLUX_PASSWORD'
+        replace: "{{ INFLUX_PASSWORD }}"
+
     - name: Restart services
       shell: docker restart carrier-vault && sleep 30 && docker restart carrier-galloper
 

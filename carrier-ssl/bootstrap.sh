@@ -14,9 +14,12 @@ docker cp /installer/grafana/datasources/. carrier-grafana:/etc/grafana/provisio
 docker cp /installer/grafana/def.yml carrier-grafana:/etc/grafana/provisioning/dashboards
 docker cp /installer/grafana/dashboards/. carrier-grafana:/etc/grafana/provisioning/dashboards
 
+sed -i "s/INFLUX_USER/INFLUXUSERNAME/g" /installer/grafana/datasources/telegraf_docker.yml
+sed -i "s/INFLUX_PASSWORD/INFLUXPASSWORD/g" /installer/grafana/datasources/telegraf_docker.yml
 GF_API_KEY=$(curl -H "Content-Type: application/json" --request POST --data '{"name":"admin","role":"Admin","secondsToLive":null}' $1://user:user@$2/grafana/api/auth/keys)
 key=$(echo "${GF_API_KEY}" | sed 's/{"name":"admin","key":"//' | sed 's/"}//')
 sed -i "s#GF_API_KEY=api_key#GF_API_KEY=$key#g" $3/carrier/.env
 
 docker restart carrier-grafana
 docker exec carrier-influx bash -c "influx -execute \"create user INFLUXUSERNAME with password 'INFLUXPASSWORD' with all privileges;\""
+docker exec carrier-influx bash -c "influx -username 'INFLUXUSERNAME' -password 'INFLUXPASSWORD' -execute 'create database carrier'"

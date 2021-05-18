@@ -361,3 +361,15 @@ services:
     entrypoint: ["/usr/bin/ggr", "-guests-allowed", "-guests-quota", "test", "-listen", ":4444", "-users", "/etc/grid-router/users.htpasswd", "-quotaDir", "/etc/grid-router/quota"]
     labels:
       - 'traefik.enable=true'
+  telegraf:
+    image: telegraf:1.18
+    logging:
+      driver: "json-file"
+      options:
+        max-file: "5"
+        max-size: "10m"
+    restart: unless-stopped
+    container_name: carrier-telegraf
+    volumes:
+      - $CARRIER_PATH/telegraf/telegraf.conf:/etc/telegraf/telegraf.conf:ro
+      - /var/run/docker.sock:/var/run/docker.sock

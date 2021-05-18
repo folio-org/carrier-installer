@@ -10,6 +10,8 @@ docker exec carrier-keycloak /opt/jboss/keycloak/bin/kcadm.sh config credentials
 && docker exec carrier-keycloak /opt/jboss/keycloak/bin/kcadm.sh update users/8a9a3cec-5e13-42cd-8736-a0e97598d86e/groups/${groupid:37:72} -r carrier -s realm=carrier -s userId=8a9a3cec-5e13-42cd-8736-a0e97598d86e -s groupId=${groupid:37:72} -n \
 && docker exec carrier-keycloak /opt/jboss/keycloak/bin/kcadm.sh update realms/carrier -s "loginTheme=carrier"
 
+sed -i "s/INFLUX_USER/INFLUXUSERNAME/g" /installer/grafana/datasources/telegraf_docker.yml
+sed -i "s/INFLUX_PASSWORD/INFLUXPASSWORD/g" /installer/grafana/datasources/telegraf_docker.yml
 docker cp /installer/grafana/datasources/. carrier-grafana:/etc/grafana/provisioning/datasources
 docker cp /installer/grafana/def.yml carrier-grafana:/etc/grafana/provisioning/dashboards
 docker cp /installer/grafana/dashboards/. carrier-grafana:/etc/grafana/provisioning/dashboards
@@ -20,3 +22,4 @@ sed -i "s#GF_API_KEY=api_key#GF_API_KEY=$key#g" $3/carrier/.env
 
 docker restart carrier-grafana
 docker exec carrier-influx bash -c "influx -execute \"create user INFLUXUSERNAME with password 'INFLUXPASSWORD' with all privileges;\""
+docker exec carrier-influx bash -c "influx -username 'INFLUXUSERNAME' -password 'INFLUXPASSWORD' -execute 'create database carrier'"

@@ -74,6 +74,24 @@
         regexp: 'INFLUX_USERNAME=admin'
         replace: "INFLUX_USERNAME={{ INFLUX_USERNAME }}"
 
+    - name: Replace influx host in telegraf config
+      replace:
+        path: "{{ CARRIER_PATH }}/carrier/telegraf/telegraf.conf"
+        regexp: 'INFLUX_HOST'
+        replace: "http://{{ APP_HOST }}:8086"
+
+    - name: Replace influx username in telegraf config
+      replace:
+        path: "{{ CARRIER_PATH }}/carrier/telegraf/telegraf.conf"
+        regexp: 'INFLUX_USER'
+        replace: "{{ INFLUX_USERNAME }}"
+
+    - name: Replace influx password in telegraf config
+      replace:
+        path: "{{ CARRIER_PATH }}/carrier/telegraf/telegraf.conf"
+        regexp: 'INFLUX_PASSWORD'
+        replace: "{{ INFLUX_PASSWORD }}"
+
     - name: Create and start services
       shell: cd "{{ CARRIER_PATH }}/carrier" && docker-compose up -d
       when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
