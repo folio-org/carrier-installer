@@ -91,7 +91,7 @@ services:
       - 'traefik.http.services.keycloak.loadbalancer.server.port=8080'
       - 'carrier=keycloak'
   auth:
-    image: getcarrier/carrier-auth:latest
+    image: getcarrier/carrier-auth:2.5
     logging:
       driver: "json-file"
       options:
@@ -118,7 +118,7 @@ services:
       - 'traefik.http.services.carrier-auth.loadbalancer.server.port=80'
       - 'carrier=auth'
   galloper:
-    image: getcarrier/galloper:latest
+    image: getcarrier/galloper:2.5
     logging:
       driver: "json-file"
       options:
@@ -298,7 +298,7 @@ services:
     labels:
       - 'traefik.enable=false'
   interceptor:
-    image: getcarrier/interceptor:latest
+    image: getcarrier/interceptor:2.5
     logging:
       driver: "json-file"
       options:
@@ -342,7 +342,7 @@ services:
       - /usr/bin/docker:/usr/bin/docker
       - $CARRIER_PATH/jenkins:/var/jenkins_home
   observer_hub:
-    image: getcarrier/observer-hub:latest
+    image: getcarrier/observer-hub:2.5
     logging:
       driver: "json-file"
       options:
