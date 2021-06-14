@@ -4,14 +4,14 @@
 #### Prerequisites
 Make sure that you have at least 32GB of RAM on VM where you want install Carrier  
 Required ports:
-22, 80, 3100, 6379, 8086.
+22, 80, 3100, 5672, 8086.
 
 1) Install Docker.
 
 2) Run the docker command:
 
 ``
-docker run -it -v /opt:/opt -v /var/run/docker.sock:/var/run/docker.sock -p 1337:1337 getcarrier/installer:2.0
+docker run -it -v /opt:/opt -v /var/run/docker.sock:/var/run/docker.sock -p 1337:1337 getcarrier/installer:2.5
 ``
 
 3) Open http://localhost:1337/ in your browser  
