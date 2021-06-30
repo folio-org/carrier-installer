@@ -10,12 +10,6 @@ sed -i "s#/opt#$3#g" /installer/vars/default.yml
 sed -i "s#REDIS_PASSWORD: password#REDIS_PASSWORD: $4#g" /installer/vars/default.yml
 sed -i "s#INFLUX_PASSWORD: password#INFLUX_PASSWORD: $5#g" /installer/vars/default.yml
 sed -i "s#INFLUX_USERNAME: admin#INFLUX_USERNAME: $6#g" /installer/vars/default.yml
-sed -i "s#password: password#password: $5#g" /installer/grafana/datasources/gatling.yml
-sed -i "s#user: admin#user: $6#g" /installer/grafana/datasources/gatling.yml
-sed -i "s#password: password#password: $5#g" /installer/grafana/datasources/jmeter.yml
-sed -i "s#user: admin#user: $6#g" /installer/grafana/datasources/jmeter.yml
-sed -i "s#password: password#password: $5#g" /installer/grafana/datasources/telegraf.yml
-sed -i "s#user: admin#user: $6#g" /installer/grafana/datasources/telegraf.yml
 sed -i "s#RABBIT_PASSWORD: password#RABBIT_PASSWORD: ${10}#g" /installer/vars/default.yml
 
 if [[ $7 == "https"  ]]; then

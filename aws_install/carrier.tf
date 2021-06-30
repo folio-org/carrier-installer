@@ -4,16 +4,16 @@ provider "aws" {
   region     = "${var.region}"
 }
 
+resource "aws_ebs_volume" "carrier_ebs" {
+  availability_zone = "${var.region}a"
+  size              = "${var.disk_size}"
+}
+
 resource "aws_volume_attachment" "ebs_att" {
   device_name = "/dev/sdh"
   volume_id   = aws_ebs_volume.carrier_ebs.id
   instance_id = aws_instance.carrier.id
   skip_destroy = true
-}
-
-resource "aws_ebs_volume" "carrier_ebs" {
-  availability_zone = "${var.region}a"
-  size              = "${var.disk_size}"
 }
 
 resource "aws_security_group" "Carrier_security_group" {
@@ -28,8 +28,8 @@ resource "aws_security_group" "Carrier_security_group" {
   }
   ingress {
     cidr_blocks = "${var.ingressCIDRblock}"
-    from_port   = 80
-    to_port     = 80
+    from_port   = "${var.traefik_port}"
+    to_port     = "${var.traefik_port}"
     protocol    = "tcp"
   }
   ingress {
@@ -40,8 +40,14 @@ resource "aws_security_group" "Carrier_security_group" {
   }
   ingress {
     cidr_blocks = "${var.ingressCIDRblock}"
-    from_port   = 6379
-    to_port     = 6379
+    from_port   = 4444
+    to_port     = 4444
+    protocol    = "tcp"
+  }
+  ingress {
+    cidr_blocks = "${var.ingressCIDRblock}"
+    from_port   = 5672
+    to_port     = 5672
     protocol    = "tcp"
   }
   ingress {
@@ -60,6 +66,7 @@ resource "aws_security_group" "Carrier_security_group" {
 
 resource "aws_instance" "carrier" {
   ami            = "${var.ami}"
+  availability_zone = "${var.region}a"
   instance_type  = "${var.vm_type}"
   key_name       = "${var.key_name}"
   vpc_security_group_ids = [aws_security_group.Carrier_security_group.id]

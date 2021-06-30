@@ -4,6 +4,7 @@ variable "vm_type" {}
 variable "ami" {}
 variable "key_name" {}
 variable "disk_size" {}
+variable "traefik_port" {}
 
 
 variable "region" {

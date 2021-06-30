@@ -6,6 +6,12 @@ sed -i "s/youraccname/$3/g" /installer/gcp_install/terraform.tfvars
 projname=`grep -w "project_id" "/installer/gcp_install/credentials.json" | cut -d: -f2 | sed s/' '//g | sed s/'"'//g | sed s/','//g`
 sed -i "s/yourprojname/${projname}/g" /installer/gcp_install/terraform.tfvars
 
+if [[ ${10} == "https"  ]]; then
+  sed -i "s/traefikport/443/g" /installer/gcp_install/terraform.tfvars
+else
+  sed -i "s/traefikport/80/g" /installer/gcp_install/terraform.tfvars
+fi
+
 if [[ $4 == "us-central1" ]]; then
   sed -i "s#yourregion#us-central1-a#g" /installer/gcp_install/terraform.tfvars
 fi
@@ -83,12 +89,6 @@ sed -i "s#/opt#$5#g" /installer/vars/default.yml
 sed -i "s#REDIS_PASSWORD: password#REDIS_PASSWORD: $6#g" /installer/vars/default.yml
 sed -i "s#INFLUX_PASSWORD: password#INFLUX_PASSWORD: $7#g" /installer/vars/default.yml
 sed -i "s#INFLUX_USERNAME: admin#INFLUX_USERNAME: $8#g" /installer/vars/default.yml
-sed -i "s#password: password#password: $7#g" /installer/grafana/datasources/gatling.yml
-sed -i "s#user: admin#user: $8#g" /installer/grafana/datasources/gatling.yml
-sed -i "s#password: password#password: $7#g" /installer/grafana/datasources/jmeter.yml
-sed -i "s#user: admin#user: $8#g" /installer/grafana/datasources/jmeter.yml
-sed -i "s#password: password#password: $7#g" /installer/grafana/datasources/telegraf.yml
-sed -i "s#user: admin#user: $8#g" /installer/grafana/datasources/telegraf.yml
 sed -i "s#your_disk_size#${9}#g" /installer/gcp_install/terraform.tfvars
 sed -i "s#RABBIT_PASSWORD: password#RABBIT_PASSWORD: ${13}#g" /installer/vars/default.yml
 

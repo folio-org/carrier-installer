@@ -20,7 +20,7 @@ resource "google_compute_firewall" "default" {
 
  allow {
    protocol = "tcp"
-   ports    = ["22", "80", "443", "8080", "8086", "3100", "4444", "9999"]
+   ports    = ["22", "${var.traefik_port}", "8080", "8086", "3100", "4444", "5672"]
  }
 }
 

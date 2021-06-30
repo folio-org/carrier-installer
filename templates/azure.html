@@ -67,6 +67,14 @@
           </select>
           </div>
           <p></p>
+         <div class="form-group">
+        <label> Select Virtual Machine Disk Size: </label>
+        <select class="custom-select" name="disksize">
+          <option value="100"> Low 100 GB </option>
+          <option value="256" selected> Medium 256 GB (Recommended) </option>
+          <option value="512"> High 512 GB </option>
+        </select>
+        </div>
           <div class="form-group">
             <label for="carrier_path">Carrier Path</label>
             <input type="text" class="form-control" name="carrier_path" id="carrier_path" placeholder="Enter your preferred path (by default /opt)">

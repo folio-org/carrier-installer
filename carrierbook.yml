@@ -53,6 +53,9 @@
         enabled: yes
       when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
 
+    - name: Create docker mount
+      shell: service docker stop && mkdir "{{ CARRIER_PATH }}/docker" && mount --rbind "{{ CARRIER_PATH }}/docker" /var/lib/docker && service docker start
+
     - name: Install docker-compose
       apt:
         name: docker-compose
@@ -68,7 +71,7 @@
       when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
 
     - name: Copy Files
-      shell: git clone https://github.com/carrier-io/installer.git && mv ./installer/carrier "{{ CARRIER_PATH }}/carrier" && rm -rf ./installer
+      shell: git clone https://github.com/carrier-io/installer.git --branch v.2.5 && mv ./installer/carrier "{{ CARRIER_PATH }}/carrier" && mkdir /installer && mv ./installer/grafana /installer/grafana && rm -rf ./installer
 
     - name: Replace app host
       replace:
@@ -105,6 +108,24 @@
         path: "{{ CARRIER_PATH }}/carrier/.env"
         regexp: 'INFLUX_USERNAME=admin'
         replace: "INFLUX_USERNAME={{ INFLUX_USERNAME }}"
+
+    - name: Replace influx host in telegraf config
+      replace:
+        path: "{{ CARRIER_PATH }}/carrier/telegraf/telegraf.conf"
+        regexp: 'INFLUX_HOST'
+        replace: "http://{{ APP_HOST }}:8086"
+
+    - name: Replace influx username in telegraf config
+      replace:
+        path: "{{ CARRIER_PATH }}/carrier/telegraf/telegraf.conf"
+        regexp: 'INFLUX_USER'
+        replace: "{{ INFLUX_USERNAME }}"
+
+    - name: Replace influx password in telegraf config
+      replace:
+        path: "{{ CARRIER_PATH }}/carrier/telegraf/telegraf.conf"
+        regexp: 'INFLUX_PASSWORD'
+        replace: "{{ INFLUX_PASSWORD }}"
 
     - name: Create and start services
       shell: cd "{{ CARRIER_PATH }}/carrier" && docker-compose up -d

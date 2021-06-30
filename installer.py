@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, send_file, redirect, url_for
 
 import os
+from time import sleep
 
 installer = Flask(__name__)
 
@@ -20,8 +21,8 @@ def aws():
         awsregion = args['region']
         disk_size = args['disksize']
         ssl = args['ssl']
-        domainname = args['domainname']
-        sslmail = args.get("sslmail") if args.get("sslmail") != "" else "dev"
+        domainname = args.get("domainname") if args.get("domainname") != "" else "http"
+        sslmail = args.get("sslmail") if args.get("sslmail") != "" else "http"
         rabbit_pass = args.get("rabbit_pass") if args.get("rabbit_pass") != "" else "password"
         carrier_path = args.get("carrier_path") if args.get("carrier_path") != "" else "/opt"
         redis_pass = args.get("redis_pass") if args.get("redis_pass") != "" else "password"
@@ -45,8 +46,8 @@ def gcp():
         vmtype = args['vmtype']
         disk_size = args['disksize']
         ssl = args['ssl']
-        domainname = args['domainname']
-        sslmail = args.get("sslmail") if args.get("sslmail") != "" else "dev"
+        domainname = args.get("domainname") if args.get("domainname") != "" else "http"
+        sslmail = args.get("sslmail") if args.get("sslmail") != "" else "http"
         rabbit_pass = args.get("rabbit_pass") if args.get("rabbit_pass") != "" else "password"
         carrier_path = args.get("carrier_path") if args.get("carrier_path") != "" else "/opt"
         redis_pass = args.get("redis_pass") if args.get("redis_pass") != "" else "password"
@@ -66,10 +67,11 @@ def azure():
         args = request.form
         location = args['region']
         vmtype = args['vmtype']
+        disk_size = args['disksize']
         ostype = args['ostype']
         ssl = args['ssl']
-        domainname = args['domainname']
-        sslmail = args.get("sslmail") if args.get("sslmail") != "" else "dev"
+        domainname = args.get("domainname") if args.get("domainname") != "" else "http"
+        sslmail = args.get("sslmail") if args.get("sslmail") != "" else "http"
         rabbit_pass = args.get("rabbit_pass") if args.get("rabbit_pass") != "" else "password"
         carrier_path = args.get("carrier_path") if args.get("carrier_path") != "" else "/opt"
         redis_pass = args.get("redis_pass") if args.get("redis_pass") != "" else "password"
@@ -77,10 +79,10 @@ def azure():
         influx_user = args.get("influx_user") if args.get("influx_user") != "" else "admin"
         os.system("ssh-keygen -b 4096 -t rsa -f /installer/azure_install/id_rsa -q -N ''")
         os.system('sed -i "s#76#120#g" /installer/templates/status.html')
-        os.system(f"bash /installer/azure_install/install.sh {location} {vmtype} {ostype} {carrier_path} {redis_pass} {influx_pass} {influx_user} {ssl} {domainname} {sslmail} {rabbit_pass} &")
-        return send_file("/installer/azure_install/id_rsa", as_attachment=True)
+        os.system(f"bash /installer/azure_install/install.sh {location} {vmtype} {ostype} {carrier_path} {redis_pass} {influx_pass} {influx_user} {ssl} {domainname} {sslmail} {rabbit_pass} {disk_size} &")
+        return redirect(url_for('status'))
     else:
-        os.system('nohup az login & sleep 2 && sed -i "s#MYCODE#`cat nohup.out`#g" /installer/templates/azure.html')
+        os.system('nohup az login & sleep 5 && sed -i "s#MYCODE#`cat nohup.out`#g" /installer/templates/azure.html')
         return render_template('azure.html')
 
 
@@ -92,8 +94,8 @@ def ssh():
         sshuser = args['username']
         sshrsa = args['file']
         ssl = args['ssl']
-        domainname = args['domainname']
-        sslmail = args.get("sslmail") if args.get("sslmail") != "" else "dev"
+        domainname = args.get("domainname") if args.get("domainname") != "" else "http"
+        sslmail = args.get("sslmail") if args.get("sslmail") != "" else "http"
         rabbit_pass = args.get("rabbit_pass") if args.get("rabbit_pass") != "" else "password"
         carrier_path = args.get("carrier_path") if args.get("carrier_path") != "" else "/opt"
         redis_pass = args.get("redis_pass") if args.get("redis_pass") != "" else "password"
