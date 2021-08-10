@@ -277,7 +277,7 @@ services:
     labels:
       - 'traefik.enable=false'
   rabbitmq:
-    image: rabbitmq:3-management
+    image: rabbitmq:3.7-management
     hostname: 'carrier_rabbit'
     logging:
       driver: "json-file"
