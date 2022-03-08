@@ -276,7 +276,9 @@ services:
         max-size: "10m"
     restart: unless-stopped
     ports:
+      - 5671:5671
       - 5672:5672
+      - 15671:15671
       - 15672:15672
     container_name: carrier-rabbit
     environment:

@@ -71,13 +71,13 @@
       when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
 
     - name: Copy Files
-      shell: git clone https://github.com/carrier-io/installer.git --branch v.2.5 && mv ./installer/carrier "{{ CARRIER_PATH }}/carrier" && mkdir /installer && mv ./installer/grafana /installer/grafana && rm -rf ./installer
+      shell: git clone https://github.com/folio-org/carrier-installer.git --branch v.2.6 && mv ./carrier-installer ./installer && mv ./installer/carrier "{{ CARRIER_PATH }}/carrier" && mkdir /installer && mv ./installer/grafana /installer/grafana && rm -rf ./installer
 
     - name: Replace app host
       replace:
         path: "{{ CARRIER_PATH }}/carrier/.env"
         regexp: 'http://localhost'
-        replace: "http://{{ APP_HOST }}"
+        replace: "https://{{ APP_HOST }}"
 
     - name: Replace install path
       replace:
@@ -156,7 +156,7 @@
       shell: docker restart carrier-vault && sleep 30 && docker restart carrier-galloper
 
     - name: bootstrap
-      shell: bash "{{ CARRIER_PATH }}/carrier/bootstrap.sh" http {{ APP_HOST }} {{ CARRIER_PATH }}
+      shell: bash "{{ CARRIER_PATH }}/carrier/bootstrap.sh" https {{ APP_HOST }} {{ CARRIER_PATH }}
 
     - name: Restart services
       shell: cd "{{ CARRIER_PATH }}/carrier" && docker-compose up -d
